@@ -4,12 +4,13 @@ using NUnit.Framework;
 namespace uShip.Logging.Tests
 {
     [TestFixture]
-    public class ProgramTests
+    public class LoggerTests
     {
         [Test]
-        public void Message_should_be_hello_world()
+        public void Should_pass()
         {
-            Program.Message.Should().Be("Hello, World!");
+            ILogger logger = null;
+            logger.Should().BeNull();
         }
     }
 }
