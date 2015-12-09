@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace uShip.Logging
 {
-    class Program
+    public class Program
     {
+        public const string Message = "Hello, World!";
+
         static void Main(string[] args)
         {
+            Console.WriteLine(Message);
         }
     }
 }
