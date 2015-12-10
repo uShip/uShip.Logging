@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
+    <version>$version$-beta</version>
     <title>uShip Logging</title>
     <authors>
       Stephen Guerra, Evan Jones, Troy Miller, Jordan Piedt, Ivan Valle, Ed Vinyard, Jake Wilke
