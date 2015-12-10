@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
+    <version>$version$-beta</version>
     <title>uShip Logging</title>
     <authors>
       Stephen Guerra, Evan Jones, Troy Miller, Jordan Piedt, Ivan Valle, Ed Vinyard, Jake Wilke
@@ -11,7 +11,7 @@
     <licenseUrl>https://github.com/uShip/uShip.Logging/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/uShip/uShip.Logging</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Logging infrastructure for uShip</description>
+    <description>$description$</description>
     <releaseNotes>Experimental release.  Not intended for production use (yet).</releaseNotes>
     <copyright>Copyright 2015 uShip, Inc.</copyright>
   </metadata>
