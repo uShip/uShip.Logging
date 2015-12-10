@@ -11,7 +11,7 @@
     <licenseUrl>https://github.com/uShip/uShip.Logging/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/uShip/uShip.Logging</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Logging infrastructure for uShip</description>
     <releaseNotes>Experimental release.  Not intended for production use (yet).</releaseNotes>
     <copyright>Copyright 2015 uShip, Inc.</copyright>
   </metadata>
