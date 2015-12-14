@@ -71,6 +71,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="ConfiguredLogger.cs" />
     <Compile Include="Extensions\HttpRequestExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IFluentLogger.cs" />
     <Compile Include="IFluentLoggerWriter.cs" />
     <Compile Include="IGraphiteKey.cs" />

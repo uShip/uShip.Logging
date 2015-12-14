@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace uShip.Logging.Extensions
 {
-    internal static class HttpRequestExtensions
+    public static class HttpRequestExtensions
     {
         /// <summary>
         /// Gets the content (body) of an HttpRequest message as found on HttpContext.Current
