@@ -45,7 +45,7 @@ namespace uShip.Logging
             }
         }
 
-        internal Logger(LogFactory logFactory, LoggingEventDataBuilder loggingEventDataBuilder)
+        public Logger(LogFactory logFactory, LoggingEventDataBuilder loggingEventDataBuilder)
         {
             _loggingEventDataBuilder = loggingEventDataBuilder;
 
@@ -73,19 +73,19 @@ namespace uShip.Logging
 
         public void Write(IGraphiteKey key, string subKey = null)
         {
-            var message = FormatGraphiteMessage(key.ToString(), subKey, null);
+            var message = FormatGraphiteMessage(key.Key, subKey, null);
             _graphiteLog.Info(message);
         }
 
         public void Write(IGraphiteKey key, long milliseconds)
         {
-            var message = FormatGraphiteMessage(key.ToString(), null, milliseconds);
+            var message = FormatGraphiteMessage(key.Key, null, milliseconds);
             _graphiteLog.Info(message);
         }
 
         public void Write(IGraphiteKey key, string subKey, long milliseconds)
         {
-            var message = FormatGraphiteMessage(key.ToString(), subKey, milliseconds);
+            var message = FormatGraphiteMessage(key.Key, subKey, milliseconds);
             _graphiteLog.Info(message);
         }
 

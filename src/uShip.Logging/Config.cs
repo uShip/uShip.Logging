@@ -5,8 +5,8 @@
     /// </summary>
     internal static class Config
     {
-        public const string MinimalDataLogMessage = "";
-        public const string GraphiteMetricPath = "";
+        public const string MinimalDataLogMessage = "MinimalDataLogMessage";
+        public const string GraphiteMetricPath = "GraphiteMetricPath.";
 
         public static string[] JsonReplacements = {"passwordFieldGoesHere", "creditCardFieldGoesHere"};
         public static string[] UrlFormEncodedReplacement = { "passwordFieldGoesHere", "creditCardFieldGoesHere" };

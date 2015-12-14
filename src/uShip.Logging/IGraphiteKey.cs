@@ -5,6 +5,6 @@
         /// <summary>
         /// The metric to log to Graphite
         /// </summary>
-        string Key { get; set; }
+        string Key { get; }
     }
 }

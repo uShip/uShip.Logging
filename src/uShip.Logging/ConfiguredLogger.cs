@@ -1,6 +1,6 @@
 ﻿namespace uShip.Logging
 {
-    internal enum ConfiguredLogger
+    public enum ConfiguredLogger
     {
         /// <summary>
         /// This is the flag for the Graphite logger.

@@ -2,9 +2,9 @@
 
 namespace uShip.Logging
 {
-    internal class LogFactory
+    public class LogFactory
     {
-        internal ILog Create(ConfiguredLogger configuredLogger)
+        public virtual ILog Create(ConfiguredLogger configuredLogger)
         {
             return LogManager.GetLogger(configuredLogger.ToString());
         }
