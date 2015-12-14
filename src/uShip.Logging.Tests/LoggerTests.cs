@@ -7,10 +7,12 @@ namespace uShip.Logging.Tests
     public class LoggerTests
     {
         [Test]
-        public void Should_pass()
+        public void Should_log_hello_world()
         {
-            ILogger logger = null;
-            logger.Should().BeNull();
+            var logger = Logger.GetInstance();
+            logger.Should().NotBeNull();
+
+            logger.Message("Hello, World!").Write();
         }
     }
 }
