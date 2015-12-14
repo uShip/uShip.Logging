@@ -27,11 +27,3 @@ deploy:
   api_key:
     secure: LAUvjakgzRSJgwdGkjrFEV/KRvUgWABPUuye+IcpCUwGRO+w/ZqxVV7okkGN1v1T
   skip_symbols: true
-notifications:
-- provider: Slack
-  incoming_webhook: 
-    secure: e2iGzf7NqoTGTVT9bqBW9I7CCa6kupiX3c1fGeiqscDF/8c+/vKI9AGsm0hkQnfv5OHac1j0FkPQ0mEOtmUBvcx+KklHd+zgnvOq8cxIM/4=
-  channel: appveyor
-  on_build_success: true
-  on_build_failure: true
-  on_build_status_changed: true
