@@ -31,7 +31,7 @@
 	  <level value="ALL" />
 	  <appender-ref ref="LogstashMinimalAppender"/>
 	</logger>
-  </log4net
+  </log4net>
   <uShip.Logging 
     graphiteMetricPath="graphite.something."
     minimalDataLogMessage="Minimal test message">
