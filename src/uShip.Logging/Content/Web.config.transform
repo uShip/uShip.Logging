@@ -1,9 +1,8 @@
-﻿﻿<configuration>
-
+﻿<?xml version="1.0" encoding="utf-8"?>﻿
+<configuration>
   <configSections>
 	  <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net"/>
   </configSections>
-
   <log4net>
 	<appender name="LogstashAppender" type="uShip.Logging.Appender.LogstashAppender">
 	  <remoteAddress value="" />
@@ -32,5 +31,4 @@
 	  <appender-ref ref="LogstashMinimalAppender"/>
 	</logger>
   </log4net>
-
 </configuration>
