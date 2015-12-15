@@ -1,0 +1,36 @@
+﻿﻿<configuration>
+
+  <configSections>
+	  <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net"/>
+  </configSections>
+
+  <log4net>
+	<appender name="LogstashAppender" type="uShip.Logging.Appender.LogstashAppender">
+	  <remoteAddress value="" />
+	  <remotePort value="" />
+	  <encoding value="utf-8"/>
+	</appender>
+	<appender name="LogstashMinimalAppender" type="uShip.Logging.Appender.LogstashAppender">
+	  <remoteAddress value="" />
+	  <remotePort value="" />
+	  <encoding value="utf-8"/>
+	</appender>
+	<appender name="ApiErrorLogAppender" type="uShip.Logging.Appender.ApiErrorLogAppender">
+	  <apiUrl value="" />
+	  <threshold value="ERROR" />
+	</appender>
+	<logger name="Logstash">
+	  <level value="ALL" />
+	  <appender-ref ref="LogstashAppender" />	  
+	  <appender-ref ref="ApiErrorLogAppender" />
+	</logger>
+	<logger name="Graphite">
+	  <level value="ALL" />
+	</logger>
+	<logger name="Minimal">
+	  <level value="ALL" />
+	  <appender-ref ref="LogstashMinimalAppender"/>
+	</logger>
+  </log4net>
+
+</configuration>

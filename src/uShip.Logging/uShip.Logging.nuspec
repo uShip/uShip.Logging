@@ -15,4 +15,7 @@
     <releaseNotes>Experimental release.  Not intended for production use (yet).</releaseNotes>
     <copyright>Copyright 2015 uShip, Inc.</copyright>
   </metadata>
+  <files>
+    <file src="Content\**" target="Content" />
+  </files>
 </package>
