@@ -2,6 +2,7 @@
 <configuration>
   <configSections>
 	  <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net"/>
+	  <section name="uShip.Logging" type="uShip.Logging.uShipLoggingConfigurationSection, uShip.Logging"/>
   </configSections>
   <log4net>
 	<appender name="LogstashAppender" type="uShip.Logging.Appender.LogstashAppender">
@@ -30,5 +31,21 @@
 	  <level value="ALL" />
 	  <appender-ref ref="LogstashMinimalAppender"/>
 	</logger>
-  </log4net>
+  </log4net
+  <uShip.Logging 
+    graphiteMetricPath="graphite.something."
+    minimalDataLogMessage="Minimal test message">
+    <jsonReplacements>
+      <add field="password"/>
+      <add field="creditCard"/>
+    </jsonReplacements>
+    <urlFormEncodedReplacements>
+      <add field="password" />
+      <add field="creditCard" />
+    </urlFormEncodedReplacements>
+    <regexReplacements>
+      <add field="password" />
+      <add field="creditCard" />
+    </regexReplacements>
+  </uShip.Logging>
 </configuration>
