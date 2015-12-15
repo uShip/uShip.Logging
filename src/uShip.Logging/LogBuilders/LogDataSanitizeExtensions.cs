@@ -7,10 +7,16 @@ namespace uShip.Logging.LogBuilders
     internal static class LogDataSanitizeExtensions
     {
         private static readonly RegexReplacement[] SensitiveInfoPatterns =
-            Config.JsonReplacements.Select(x => new JsonReplacement(x))
-                .Concat<RegexReplacement>(Config.UrlFormEncodedReplacement.Select(x => new UrlFormEncodedReplacement(x)))
-                .Concat(Config.RegexReplacements.Select(x => new RegexReplacement(x, "************")))
-                .ToArray();
+            uShipLogging.Config.JsonReplacements
+                .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>().Select(x => new JsonReplacement(x.Field))
+                .Concat<RegexReplacement>(
+                    uShipLogging.Config.UrlFormEncodedReplacements
+                        .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>()
+                        .Select(x => new UrlFormEncodedReplacement(x.Field)))
+                .Concat(
+                    uShipLogging.Config.RegexReplacements
+                        .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>()
+                        .Select(x => new RegexReplacement(x.Field, "************"))).ToArray();
 
         public static string SanitizeSensitiveInfo(this string content)
         {

@@ -45,7 +45,7 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test);
 
-            log.Received().Info("GraphiteMetricPath.Test:1|c");
+            log.Received().Info("graphite.test.Test:1|c");
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test, "SubKey");
 
-            log.Received().Info("GraphiteMetricPath.Test.SubKey:1|c");
+            log.Received().Info("graphite.test.Test.SubKey:1|c");
         }
 
         [Test]

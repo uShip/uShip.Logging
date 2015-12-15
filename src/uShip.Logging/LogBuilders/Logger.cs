@@ -9,8 +9,8 @@ namespace uShip.Logging
 {
     public partial class Logger : ILogger
     {
-        private const string GraphiteMetricPath = Config.GraphiteMetricPath;
-
+        private readonly string _graphiteMetricPath = uShipLogging.Config.GraphiteMetricPath;
+         
         private readonly LoggingEventDataBuilder _loggingEventDataBuilder = new LoggingEventDataBuilder();
 
         private readonly ILog _logstashLog;
@@ -52,7 +52,7 @@ namespace uShip.Logging
             _logstashLog = logFactory.Create(ConfiguredLogger.Logstash);
             _graphiteLog = logFactory.Create(ConfiguredLogger.Graphite);
             _minimalLog = logFactory.Create(ConfiguredLogger.Minimal);
-            _graphiteCountFormat = GraphiteMetricPath + "{0}:1|c";
+            _graphiteCountFormat = _graphiteMetricPath + "{0}:1|c";
             _graphiteTimedFormat = "{0}:{1}|ms";
         }
 
@@ -97,7 +97,7 @@ namespace uShip.Logging
         public void WriteMinimalDataLog(string jsonData, Severity? severity = null)
         {
             CreateMinimalMessageBuilder()
-                .Message(Config.MinimalDataLogMessage)
+                .Message(uShipLogging.Config.MinimalDataLogMessage)
                 .WithSeverity(severity)
                 .WithRawJsonObject(jsonData)
                 .Write();
