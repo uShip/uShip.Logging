@@ -6,7 +6,7 @@ using System.IO;
 
 namespace uShip.Logging.Appender
 {
-    public class ExceptionLogAppender : AppenderSkeleton
+    public class FileLogAppender : AppenderSkeleton
     {
         public string BaseDirectory { get; set; }
         public SecurityContext SecurityContext { get; set; }

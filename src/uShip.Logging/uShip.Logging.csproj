@@ -67,7 +67,7 @@
     <Compile Include="Appender\ExceptionFormatter.cs" />
     <Compile Include="Config\uShipLoggingConfigurationSection.cs" />
     <Compile Include="ExceptionFormatter.cs" />
-    <Compile Include="Appender\ExceptionLogAppender.cs" />
+    <Compile Include="Appender\FileLogAppender.cs" />
     <Compile Include="Appender\LogstashAppender.cs" />
     <Compile Include="Appender\ApiErrorLogAppender.cs" />
     <Compile Include="ConfiguredLogger.cs" />
