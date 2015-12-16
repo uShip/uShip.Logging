@@ -1,5 +1,5 @@
 # uShip.Logging
-Opinionated framework for logging to [Logstash](https://github.com/elastic/logstash) and [Graphite](https://github.com/mit-carbon/Graphite) based on [log4net](https://github.com/apache/log4net).
+Opinionated fluent library for logging to [Logstash](https://github.com/elastic/logstash) and [Graphite](https://github.com/mit-carbon/Graphite) based on [log4net](https://github.com/apache/log4net).
 
 ## Basic Usage
 
