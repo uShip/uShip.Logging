@@ -29,16 +29,22 @@ namespace uShip.Logging.LogBuilders
 
         private class JsonReplacement : RegexReplacement
         {
+            private const string JsonPattern = @"([""]?{0}[""]?\s*:\s*)(?:(?=[""])([""])[^""\r\n]*([""]?)|[^,""\r\n]*)";
+            private const string JsonValueObfuscation = "$1$2****$3";
+
             public JsonReplacement(string name)
-                : base(string.Format(@"([""]?{0}[""]?\s*:\s*)(?:(?=[""])([""])[^""\r\n]*([""]?)|[^,""\r\n]*)", name), "$1$2****$3")
+                : base(string.Format(JsonPattern, name), JsonValueObfuscation)
             {
             }
         }
 
         private class UrlFormEncodedReplacement : RegexReplacement
         {
+            private const string UrlFormEncodedPattern = @"((?:^|&){0}=)(?:[^&]+)($|&)";
+            private const string UrlFormEncodedObfuscation = "$1****$2";
+
             public UrlFormEncodedReplacement(string name)
-                : base(string.Format(@"((?:^|&){0}=)(?:[^&]+)($|&)", name), "$1****$2")
+                : base(string.Format(UrlFormEncodedPattern, name), UrlFormEncodedObfuscation)
             {
             }
         }
