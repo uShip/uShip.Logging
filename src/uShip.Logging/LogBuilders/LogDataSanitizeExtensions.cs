@@ -11,11 +11,11 @@ namespace uShip.Logging.LogBuilders
                 .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>().Select(x => new JsonReplacement(x.Field))
                 .Concat<RegexReplacement>(
                     uShipLogging.Config.UrlFormEncodedReplacements
-                        .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>()
+                        .Cast<uShipLoggingConfigurationSection.UrlFormEncodedReplacementsElementCollection.AddElement>()
                         .Select(x => new UrlFormEncodedReplacement(x.Field)))
                 .Concat(
                     uShipLogging.Config.RegexReplacements
-                        .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>()
+                        .Cast<uShipLoggingConfigurationSection.RegexReplacementsElementCollection.AddElement>()
                         .Select(x => new RegexReplacement(x.Field, "************"))).ToArray();
 
         public static string SanitizeSensitiveInfo(this string content)
