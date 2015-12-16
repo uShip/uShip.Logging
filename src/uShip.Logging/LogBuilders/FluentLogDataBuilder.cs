@@ -162,10 +162,10 @@ namespace uShip.Logging
                     {
                         _log.Logger.Log(loggingEvent);
                     }
-// ReSharper disable once EmptyGeneralCatchClause
-                    catch
+                    catch(Exception e)
                     {
                         // We need something here eventually, if logstash is down we lose logs
+                        Console.WriteLine("Failed to send messages to Logstash: " + e);
                     }
                 };
 

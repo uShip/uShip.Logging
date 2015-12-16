@@ -60,10 +60,10 @@ namespace uShip.Logging.LogBuilders
 
                 udpClient.Send(messageBytes, messageBytes.Length);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // uh... we don't have a backup for our backup yet.
-                Console.WriteLine("Something really bad is happening when udp fails");
+                Console.WriteLine("Something really bad is happening when udp fails: " + e);
             }
             finally
             {
