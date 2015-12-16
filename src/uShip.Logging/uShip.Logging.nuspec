@@ -4,10 +4,8 @@
     <id>$id$</id>
     <version>$version$-beta</version>
     <title>uShip Logging</title>
-    <authors>
-      Stephen Guerra, Evan Jones, Troy Miller, Jordan Piedt, Ivan Valle, Ed Vinyard, Jake Wilke
-    </authors>
-    <owners>uSHip, Inc.</owners>
+    <authors>uShip</authors>
+    <owners>uShip, Inc.</owners>
     <licenseUrl>https://github.com/uShip/uShip.Logging/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/uShip/uShip.Logging</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
