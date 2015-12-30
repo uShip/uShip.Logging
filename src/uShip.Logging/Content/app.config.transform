@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+	<configSections>
+		<section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net"/>
+		<section name="uShip.Logging" type="uShip.Logging.uShipLoggingConfigurationSection, uShip.Logging"/>
+	</configSections>
+  
+	<log4net>
+		<appender name="LogstashAppender" type="uShip.Logging.Appender.LogstashAppender">
+			<remoteAddress value=""/>
+			<remotePort value=""/>
+			<encoding value="utf-8"/>
+		</appender>
+		<appender name="LogstashMinimalAppender" type="uShip.Logging.Appender.LogstashAppender">
+			<remoteAddress value=""/>
+			<remotePort value=""/>
+			<encoding value="utf-8"/>
+		</appender>
+		<appender name="ApiErrorLogAppender" type="uShip.Logging.Appender.ApiErrorLogAppender">
+			<apiUrl value=""/>
+			<threshold value="ERROR"/>
+		</appender>
+		<logger name="Logstash">
+			<level value="ALL"/>
+			<appender-ref ref="LogstashAppender"/>
+			<appender-ref ref="ApiErrorLogAppender"/>
+		</logger>
+		<logger name="Graphite">
+			<level value="ALL"/>
+		</logger>
+		<logger name="Minimal">
+			<level value="ALL"/>
+			<appender-ref ref="LogstashMinimalAppender"/>
+		</logger>
+	</log4net>
+  
+	<uShip.Logging graphiteMetricPath="graphite.something." minimalDataLogMessage="Minimal test message">
+		<jsonReplacements>
+			<add field="password"/>
+			<add field="creditCard"/>
+		</jsonReplacements>
+		<urlFormEncodedReplacements>
+			<add field="password"/>
+			<add field="creditCard"/>
+		</urlFormEncodedReplacements>
+		<regexReplacements>
+			<add field="password"/>
+			<add field="creditCard"/>
+		</regexReplacements>
+	</uShip.Logging>
+  
+</configuration>
