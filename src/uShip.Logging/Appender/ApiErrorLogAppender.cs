@@ -1,10 +1,10 @@
-﻿using FubuCore;
-using log4net.Appender;
+﻿using log4net.Appender;
 using log4net.Core;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Text;
+using uShip.Logging.Extensions;
 
 namespace uShip.Logging.Appender
 {
