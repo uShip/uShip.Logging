@@ -1,5 +1,4 @@
-﻿using FubuCore;
-using log4net.Util;
+﻿using log4net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;

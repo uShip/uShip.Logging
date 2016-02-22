@@ -1,8 +1,8 @@
-﻿using FubuCore;
-using log4net;
+﻿using log4net;
 using log4net.Config;
 using System;
 using System.Text;
+using uShip.Logging.Extensions;
 using uShip.Logging.LogBuilders;
 
 namespace uShip.Logging
