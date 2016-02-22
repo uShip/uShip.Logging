@@ -36,10 +36,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FubuCore, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FubuCore.2.0.0.311\lib\FubuCore.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="JetBrains.Annotations, Version=10.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.10.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
@@ -72,7 +68,11 @@
     <Compile Include="Appender\ApiErrorLogAppender.cs" />
     <Compile Include="ConfiguredLogger.cs" />
     <Compile Include="Extensions\HttpRequestExtensions.cs" />
+    <Content Include="FubuCoreExtensions\license.txt" />
+    <Compile Include="FubuCoreExtensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="FubuCoreExtensions\StackFrameExtensions.cs" />
+    <Compile Include="FubuCoreExtensions\StreamExtensions.cs" />
     <Compile Include="IFluentLogger.cs" />
     <Compile Include="IFluentLoggerWriter.cs" />
     <Compile Include="IGraphiteKey.cs" />
