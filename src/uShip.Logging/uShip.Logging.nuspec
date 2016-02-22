@@ -12,7 +12,7 @@
     <description>$description$</description>
     <releaseNotes>Experimental release.  Not intended for production use (yet).</releaseNotes>
     <copyright>Copyright 2015 uShip, Inc.</copyright>
-    <tags>uShip.com, uShip, uShip.Logging</tags>
+    <tags>uShip.com, uShip, uShip.Logging, logstash, graphite</tags>
     <dependencies>
         <dependency id="Newtonsoft.Json" version="7.0.1" />
         <dependency id="log4net" version="2.0.5"  />
