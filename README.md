@@ -1,3 +1,6 @@
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/uShip/uShip.Logging?svg=true)](https://ci.appveyor.com/project/uShip/uShip-Logging)
+[![NuGet version](https://badge.fury.io/nu/uship.logging.svg)](https://www.nuget.org/packages/uship.logging)
+
 # uShip.Logging
 Opinionated fluent library for logging to [Logstash](https://github.com/elastic/logstash) and [Graphite](https://github.com/mit-carbon/Graphite) based on [log4net](https://github.com/apache/log4net).
 
