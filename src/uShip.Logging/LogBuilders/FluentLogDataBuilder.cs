@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Web;
 using uShip.Logging.LogBuilders;
 
 namespace uShip.Logging
@@ -22,6 +23,8 @@ namespace uShip.Logging
             private IEnumerable<KeyValuePair<string, object>> _sqlParameters;
             private readonly IDictionary<string, object> _data = new Dictionary<string, object>();
             private readonly IList<string> _tags = new List<string>();
+            private HttpRequestBase _request;
+            private HttpResponseBase _response;
 
             public FluentLogDataBuilder(ILog log, LoggingEventDataBuilder loggingEventDataBuilder)
             {
@@ -123,6 +126,18 @@ namespace uShip.Logging
                 return this;
             }
 
+            public IFluentLoggerWriter Request(HttpRequestBase request)
+            {
+                _request = request;
+                return this;
+            }
+
+            public IFluentLoggerWriter Response(HttpResponseBase response)
+            {
+                _response = response;
+                return this;
+            }
+
             private static bool UseAsync = false;
             public void Write()
             {
@@ -141,6 +156,8 @@ namespace uShip.Logging
                             .WithCurrentVersion()
                             .WithUniqueOrigin(_message, _exception)
                             .WithCurrentContext()
+                            .WithRequest(_request)
+                            .WithResponse(_response)
                             .IncludeBasicRequestInfo()
                             .IncludeRequestBody()
                             .IncludeResponse()

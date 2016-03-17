@@ -22,7 +22,7 @@ namespace uShip.Logging.LogBuilders
         ILoggingEventPropertiesBuilder WithCurrentVersion();
 
         ILoggingEventContextBuilder WithCurrentContext();
-
+        
         ILoggingEventPropertiesBuilder WithAdditionalData(IDictionary<string, object> data);
         ILoggingEventPropertiesBuilder WithTags(IEnumerable<string> tags);
 
@@ -31,6 +31,9 @@ namespace uShip.Logging.LogBuilders
 
     internal interface ILoggingEventContextBuilder
     {
+        ILoggingEventContextBuilder WithRequest(HttpRequestBase request);
+        ILoggingEventContextBuilder WithResponse(HttpResponseBase response);
+
         ILoggingEventContextBuilder IncludeBasicRequestInfo();
         ILoggingEventContextBuilder IncludeRequestBody();
         ILoggingEventContextBuilder IncludeResponse();
@@ -207,13 +210,13 @@ namespace uShip.Logging.LogBuilders
         }
 
         #region Context properties
-        private HttpContext _context;
-        HttpRequest _request;
-        HttpResponse _response;
+        private HttpContextBase _context;
+        private HttpRequestBase _request;
+        private HttpResponseBase _response;
 
         public ILoggingEventContextBuilder WithCurrentContext()
         {
-            _context = HttpContext.Current;
+            _context = new HttpContextWrapper(HttpContext.Current);
 
             if (_context == null)
                 return this;
@@ -228,6 +231,24 @@ namespace uShip.Logging.LogBuilders
                 _props["HttpRequest"] = "Unable to read request instance";
             }
 
+            return this;
+        }
+
+        public ILoggingEventContextBuilder WithRequest(HttpRequestBase request)
+        {
+            if (request != null)
+            {
+                _request = request;
+            }
+            return this;
+        }
+
+        public ILoggingEventContextBuilder WithResponse(HttpResponseBase response)
+        {
+            if (response != null)
+            {
+                _response = response;                
+            }
             return this;
         }
 
@@ -270,7 +291,7 @@ namespace uShip.Logging.LogBuilders
             return this;
         }
 
-        private string GetCallingIpAddress(HttpContext context)
+        private string GetCallingIpAddress(HttpContextBase context)
         {
             if (context == null || context.Request == null)
             {

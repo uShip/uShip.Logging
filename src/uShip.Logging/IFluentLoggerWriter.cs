@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Web;
 
 namespace uShip.Logging
 {
@@ -117,6 +118,26 @@ namespace uShip.Logging
         [Pure]
         [JetBrains.Annotations.Pure]
         IFluentLoggerWriter Sql(string sql, IEnumerable<KeyValuePair<string, object>> parameters);
+
+        /// <summary>
+        /// Fluent interface for adding the request to the log.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <remarks>Replaces the default <see cref="HttpContext.Request"/> from <see cref="HttpContext.Current"/> if not null.</remarks>
+        [Pure]
+        [JetBrains.Annotations.Pure]
+        IFluentLoggerWriter Request(HttpRequestBase request);
+
+        /// <summary>
+        /// Fluent interface for adding the response to the log.
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        /// <remarks>Replaces the default <see cref="HttpContext.Response"/> from <see cref="HttpContext.Current"/> if not null.</remarks>
+        [Pure]
+        [JetBrains.Annotations.Pure]
+        IFluentLoggerWriter Response(HttpResponseBase response);
 
         /// <summary>
         /// Fluent interface for writing the log. This commits the collected data to a log write.
