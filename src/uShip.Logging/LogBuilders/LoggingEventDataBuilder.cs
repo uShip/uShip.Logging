@@ -10,7 +10,7 @@ namespace uShip.Logging
 {
     public class LoggingEventDataBuilder
     {
-        public LoggingEventData Build(
+        public virtual LoggingEventData Build(
             StackFrame loggerStackFrame,
             Severity severity,
             string message,
