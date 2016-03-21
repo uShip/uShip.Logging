@@ -18,8 +18,8 @@ namespace uShip.Logging.Appender
             get { return false; }
         }
 
-        public string ApiUrl { get; set; }
-        public SecurityContext SecurityContext { get; set; }
+        public virtual string ApiUrl { get; set; }
+        public virtual SecurityContext SecurityContext { get; set; }
 
         public override void ActivateOptions()
         {
