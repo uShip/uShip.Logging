@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Xml;
-using FubuCore;
+using uShip.Logging.Extensions;
 using uShip.Logging.LogBuilders;
 
 namespace uShip.Logging
