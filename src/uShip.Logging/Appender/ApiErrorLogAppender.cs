@@ -65,7 +65,16 @@ namespace uShip.Logging.Appender
                     var task = httpClient.SendAsync(request);
                     task.ContinueWith(t =>
                     {
-                        var response = t.Result;
+                        HttpResponseMessage response = null;
+                        try
+                        {
+                            response = t.Result;
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorHandler.Error("Error occurred while sending exception log.", ex);
+                        }
+                        if (null == response) return;
                         if ((int) response.StatusCode < 400) return; // error handle only 400 and 500 codes
                         
                         var result = response.Content.ReadAsStringAsync().Result;
