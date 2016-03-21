@@ -62,7 +62,17 @@ namespace uShip.Logging.Appender
                     {
                         Timeout = TimeSpan.FromMinutes(1)
                     };
-                    httpClient.SendAsync(request);
+                    var task = httpClient.SendAsync(request);
+                    task.ContinueWith(t =>
+                    {
+                        var response = t.Result;
+                        if ((int) response.StatusCode < 400) return; // error handle only 400 and 500 codes
+                        
+                        var result = response.Content.ReadAsStringAsync().Result;
+                        ErrorHandler.Error(string.Format("An error occurred during POST of an error, status code: {0} content: {1}",
+                            response.StatusCode,
+                            response.Content == null ? null : result));
+                    });
                 }
             }
             catch (Exception ex)
