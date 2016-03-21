@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$-beta</version>
+    <version>$version$</version>
     <title>uShip Logging</title>
     <authors>uShip</authors>
     <owners>uShip, Inc.</owners>
@@ -12,6 +12,11 @@
     <description>$description$</description>
     <releaseNotes>Experimental release.  Not intended for production use (yet).</releaseNotes>
     <copyright>Copyright 2015 uShip, Inc.</copyright>
+    <tags>uShip.com, uShip, uShip.Logging, logstash, graphite</tags>
+    <dependencies>
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="log4net" version="2.0.5"  />
+    </dependencies>
   </metadata>
   <files>
     <file src="Content\**" target="Content" />

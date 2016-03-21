@@ -1,7 +1,7 @@
-﻿using FubuCore;
-using log4net.Core;
+﻿using log4net.Core;
 using System;
 using System.Globalization;
+using uShip.Logging.Extensions;
 using uShip.Logging.LogBuilders;
 
 namespace uShip.Logging.Appender

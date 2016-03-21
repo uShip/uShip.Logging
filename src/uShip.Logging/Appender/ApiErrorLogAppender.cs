@@ -1,10 +1,10 @@
-﻿using FubuCore;
-using log4net.Appender;
+﻿using log4net.Appender;
 using log4net.Core;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Text;
+using uShip.Logging.Extensions;
 
 namespace uShip.Logging.Appender
 {
@@ -18,8 +18,8 @@ namespace uShip.Logging.Appender
             get { return false; }
         }
 
-        public string ApiUrl { get; set; }
-        public SecurityContext SecurityContext { get; set; }
+        public virtual string ApiUrl { get; set; }
+        public virtual SecurityContext SecurityContext { get; set; }
 
         public override void ActivateOptions()
         {
@@ -62,7 +62,17 @@ namespace uShip.Logging.Appender
                     {
                         Timeout = TimeSpan.FromMinutes(1)
                     };
-                    httpClient.SendAsync(request);
+                    var task = httpClient.SendAsync(request);
+                    task.ContinueWith(t =>
+                    {
+                        var response = t.Result;
+                        if ((int) response.StatusCode < 400) return; // error handle only 400 and 500 codes
+                        
+                        var result = response.Content.ReadAsStringAsync().Result;
+                        ErrorHandler.Error(string.Format("An error occurred during POST of an error, status code: {0} content: {1}",
+                            response.StatusCode,
+                            response.Content == null ? null : result));
+                    });
                 }
             }
             catch (Exception ex)
