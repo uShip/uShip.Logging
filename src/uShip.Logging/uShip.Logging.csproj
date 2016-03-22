@@ -60,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Appender\ApiErrorLogModel.cs" />
+    <Compile Include="Appender\BaseApiLogAppender.cs" />
     <Compile Include="Appender\ExceptionFormatter.cs" />
     <Compile Include="Config\uShipLoggingConfigurationSection.cs" />
     <Compile Include="ExceptionFormatter.cs" />
