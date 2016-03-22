@@ -79,7 +79,7 @@ namespace uShip.Logging.Appender
             }
         }
 
-        private static T BuildApiErrorLogModel(LoggingEvent loggingEvent)
+        protected virtual T BuildApiErrorLogModel(LoggingEvent loggingEvent)
         {
             return new T
             {
