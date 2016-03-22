@@ -216,10 +216,13 @@ namespace uShip.Logging.LogBuilders
 
         public ILoggingEventContextBuilder WithCurrentContext()
         {
-            _context = new HttpContextWrapper(HttpContext.Current);
-
-            if (_context == null)
+            var currentContext = HttpContext.Current;
+            if (currentContext == null)
+            {
                 return this;
+            }
+
+            _context = new HttpContextWrapper(currentContext);
 
             try
             {

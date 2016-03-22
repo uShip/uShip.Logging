@@ -14,18 +14,13 @@ namespace uShip.Logging.Tests
     [TestFixture]
     public class HttpRequestLoggingTests
     {
-        [SetUp]
-        public  void BeforeClass()
-        {
-            SetHttpContext();
-        }
-
         [Test]
         public void Should_use_current_context_if_no_context_passed_in()
         {
             var logFactory = Substitute.For<LogFactory>();
             var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
             var logger = new Logger(logFactory, loggingEventDataBuilder);
+            SetHttpContext();
 
             logger
                 .Message(string.Empty)
@@ -42,6 +37,7 @@ namespace uShip.Logging.Tests
             var logFactory = Substitute.For<LogFactory>();
             var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
             var logger = new Logger(logFactory, loggingEventDataBuilder);
+            SetHttpContext();
 
             var requestBase = Substitute.For<HttpRequestBase>();
             requestBase.Url.Returns(new Uri("http://www.example.com/passed-in"));
@@ -62,6 +58,7 @@ namespace uShip.Logging.Tests
             var logFactory = Substitute.For<LogFactory>();
             var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
             var logger = new Logger(logFactory, loggingEventDataBuilder);
+            SetHttpContext();
 
             var requestBase = Substitute.For<HttpRequestBase>();
             requestBase.Url.Returns(new Uri("http://www.example.com/passed-in"));
@@ -82,6 +79,7 @@ namespace uShip.Logging.Tests
             var logFactory = Substitute.For<LogFactory>();
             var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
             var logger = new Logger(logFactory, loggingEventDataBuilder);
+            SetHttpContext();
 
             var requestBase = Substitute.For<HttpRequestBase>();
             requestBase.Url.Returns(new Uri("http://www.example.com"));
@@ -108,6 +106,23 @@ namespace uShip.Logging.Tests
             properties["StatusCode"].Should().Be(201);
             properties["ResponseHeaders"].Should().Be("X-Test=value");
             properties["ResponseBody"].Should().Be("body");
+        }
+
+        [Test]
+        public void Should_be_able_to_log_without_an_HttpContext()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
+            var logger = new Logger(logFactory, loggingEventDataBuilder);
+
+            logger
+                .Message("Hello, World!")
+                .Data("data-key", "data-value")
+                .Write();
+
+            var properties = GetPropertiesDictionary(loggingEventDataBuilder);
+
+            properties["data-key"].Should().Be("data-value");
         }
 
         private static void SetHttpContext()
