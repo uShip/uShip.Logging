@@ -321,21 +321,18 @@ namespace uShip.Logging.LogBuilders
 
         public ILoggingEventContextBuilder IncludeResponse()
         {
-            if (_context != null)
+            if (_response != null)
             {
-                if (_response != null)
+                _props["StatusCode"] = _response.StatusCode;
+
+                var outputStream = _response.OutputStream;
+                if (outputStream != null && outputStream.CanRead)
                 {
-                    _props["StatusCode"] = _response.StatusCode;
-
-                    var outputStream = _response.OutputStream;
-                    if (outputStream != null && outputStream.CanRead)
-                    {
-                        outputStream.Position = 0;
-                        _props["ResponseBody"] = outputStream.ReadAllText();
-                    }
-
-                    _props.SafeSetProp("ResponseHeaders", () => _response.Headers.ToQuery());
+                    outputStream.Position = 0;
+                    _props["ResponseBody"] = outputStream.ReadAllText();
                 }
+
+                _props.SafeSetProp("ResponseHeaders", () => _response.Headers.ToQuery());
             }
             return this;
         }

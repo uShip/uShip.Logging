@@ -79,7 +79,6 @@ namespace uShip.Logging.Tests
             var logFactory = Substitute.For<LogFactory>();
             var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
             var logger = new Logger(logFactory, loggingEventDataBuilder);
-            SetHttpContext();
 
             var requestBase = Substitute.For<HttpRequestBase>();
             requestBase.Url.Returns(new Uri("http://www.example.com"));
