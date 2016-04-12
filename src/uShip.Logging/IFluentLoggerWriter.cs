@@ -140,8 +140,18 @@ namespace uShip.Logging
         IFluentLoggerWriter Response(HttpResponseBase response);
 
         /// <summary>
+        /// Fluent interface for removes bodies the request to the log.
+        /// </summary>
+        /// <remarks>Removes body from any <see cref="HttpContext.Request"/> body from <see cref="HttpContext.Current"/> (if not null) from the current log.</remarks>
+        [Pure]
+        [JetBrains.Annotations.Pure]
+        IFluentLoggerWriter OmitRequestBody();
+
+
+        /// <summary>
         /// Fluent interface for writing the log. This commits the collected data to a log write.
         /// </summary>
         void Write();
+
     }
 }

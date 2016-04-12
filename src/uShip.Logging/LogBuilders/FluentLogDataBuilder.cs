@@ -25,6 +25,7 @@ namespace uShip.Logging
             private readonly IList<string> _tags = new List<string>();
             private HttpRequestBase _request;
             private HttpResponseBase _response;
+            private bool _shouldOmitRequestBody;
 
             public FluentLogDataBuilder(ILog log, LoggingEventDataBuilder loggingEventDataBuilder)
             {
@@ -138,6 +139,13 @@ namespace uShip.Logging
                 return this;
             }
 
+            public IFluentLoggerWriter OmitRequestBody()
+            {
+                _shouldOmitRequestBody = true;
+                return this;
+            }
+
+
             private static bool UseAsync = false;
             public void Write()
             {
@@ -149,7 +157,7 @@ namespace uShip.Logging
                     LoggingEvent loggingEvent;
                     try
                     {
-                        var properties = new LoggingEventPropertiesBuilder()
+                        var loggingEventContextBuilder = new LoggingEventPropertiesBuilder()
                             .WithMachineName()
                             .WithSqlData(_sql, _sqlParameters)
                             .WithException(_exception)
@@ -158,8 +166,12 @@ namespace uShip.Logging
                             .WithCurrentContext()
                             .WithRequest(_request)
                             .WithResponse(_response)
-                            .IncludeBasicRequestInfo()
-                            .IncludeRequestBody()
+                            .IncludeBasicRequestInfo();
+                        if (!_shouldOmitRequestBody)
+                        {
+                            loggingEventContextBuilder = loggingEventContextBuilder.IncludeRequestBody();
+                        }
+                        var properties = loggingEventContextBuilder
                             .IncludeResponse()
                             .FinishContext()
                             .WithTags(_tags)
