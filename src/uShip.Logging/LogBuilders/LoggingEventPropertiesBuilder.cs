@@ -151,10 +151,10 @@ namespace uShip.Logging.LogBuilders
                     uniqueOrigin = message;
                     break;
                 case LogType.Exception:
-                    var throwingMethod = string.IsNullOrEmpty(exception.StackTrace)
-                        ? string.Empty
-                        : new StackTrace(exception).IfNotNull(x => x.GetFrame(0).IfNotNull(y => y.ToDescription()));
-                    uniqueOrigin = string.Format("{0};{1}", exception.Message, throwingMethod);
+                    var throwingMethod = GetThrowingMethod(exception);
+                    var hasCustomMessage = !string.IsNullOrEmpty(message);
+                    // a custom message always determines uniqueness
+                    uniqueOrigin = hasCustomMessage ? message : string.Format("{0};{1}", exception.Message, throwingMethod);
                     break;
                 case LogType.SqlException:
                     uniqueOrigin = string.Format("{0};{1}", exception.Message, _sql);
@@ -163,6 +163,26 @@ namespace uShip.Logging.LogBuilders
                     throw new ArgumentOutOfRangeException("type");
             }
             return MD5Hash(uniqueOrigin);
+        }
+
+        private string GetThrowingMethod(Exception exception)
+        {
+            if (string.IsNullOrEmpty(exception.StackTrace))
+            {
+                return string.Empty;
+            }
+            var stacktrace = new StackTrace(exception);
+            var stacktraceFrames = stacktrace.GetFrames().ToList();
+            var targetStackframeNamespaces = uShipLogging.Config.TargetStackTraces
+                .Cast<uShipLoggingConfigurationSection.TargetStackTracesElementCollection.AddElement>()
+                .Select(x => x.RootNamespace);
+            var targetStacktraceFrame = stacktraceFrames.FirstOrDefault(x => 
+                targetStackframeNamespaces.Any(rootNamespace => x.ToDescription().StartsWith(rootNamespace)));
+            if (targetStacktraceFrame != null)
+            {
+                return targetStacktraceFrame.ToDescription();
+            }
+            return stacktraceFrames.FirstOrDefault().IfNotNull(x => x.ToDescription());
         }
 
         private string MD5Hash(string source)

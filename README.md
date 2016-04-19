@@ -62,6 +62,7 @@ uShip.Logging exposes the following configuration settings via a custom configur
 | jsonReplacements | The names of JSON fields that should be sanitized and not logged such as passwords and credit card numbers |
 | urlFormEncodedReplacements | The names of form fields that should sanitized and not logged such as passwords and credit card numbers |
 | regexReplacements | Regex patterns for fields that should be sanitized and not logged that do not fit into the JSON or URL encoded category above |
+| targetStackTraces | Stacktraces that you designate as the root causes of any exception. These values are usually the root namespaces of your project |
 
 ### log4net configuration
 
@@ -84,3 +85,6 @@ The following appenders are available in addition to the appenders provided by l
 ### Example Configuration
 
 See an example App.config [here](https://github.com/uShip/uShip.Logging/blob/master/src/uShip.Logging.Tests/App.config).
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md)

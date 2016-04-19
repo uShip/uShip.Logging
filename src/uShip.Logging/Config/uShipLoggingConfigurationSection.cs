@@ -94,6 +94,16 @@ namespace uShip.Logging
             }
         }
 
+        [System.Configuration.ConfigurationPropertyAttribute("targetStackTraces")]
+        [System.Configuration.ConfigurationCollectionAttribute(typeof(TargetStackTracesElementCollection.AddElement), AddItemName = "add")]
+        public TargetStackTracesElementCollection TargetStackTraces
+        {
+            get
+            {
+                return ((TargetStackTracesElementCollection)(this["targetStackTraces"]));
+            }
+        }
+
         public sealed partial class JsonReplacementsElementCollection : System.Configuration.ConfigurationElementCollection
         {
 
@@ -206,6 +216,45 @@ namespace uShip.Logging
                     set
                     {
                         this["field"] = value;
+                    }
+                }
+            }
+        }
+
+        public sealed partial class TargetStackTracesElementCollection : System.Configuration.ConfigurationElementCollection
+        {
+
+            public AddElement this[int i]
+            {
+                get
+                {
+                    return ((AddElement)(this.BaseGet(i)));
+                }
+            }
+
+            protected override System.Configuration.ConfigurationElement CreateNewElement()
+            {
+                return new AddElement();
+            }
+
+            protected override object GetElementKey(System.Configuration.ConfigurationElement element)
+            {
+                return ((AddElement)(element)).RootNamespace;
+            }
+
+            public sealed partial class AddElement : System.Configuration.ConfigurationElement
+            {
+
+                [System.Configuration.ConfigurationPropertyAttribute("rootNamespace", IsRequired = true)]
+                public string RootNamespace
+                {
+                    get
+                    {
+                        return ((string)(this["rootNamespace"]));
+                    }
+                    set
+                    {
+                        this["rootNamespace"] = value;
                     }
                 }
             }
