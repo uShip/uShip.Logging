@@ -70,7 +70,7 @@
     <Compile Include="Appender\ApiErrorLogAppender.cs" />
     <Compile Include="ConfiguredLogger.cs" />
     <Compile Include="Extensions\HttpRequestExtensions.cs" />
-    <Content Include="FubuCoreExtensions\license.txt" />
+    <None Include="FubuCoreExtensions\license.txt" />
     <Compile Include="FubuCoreExtensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="FubuCoreExtensions\StackFrameExtensions.cs" />
