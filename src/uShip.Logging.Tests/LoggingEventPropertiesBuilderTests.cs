@@ -26,7 +26,7 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
-        public void Should_Have_Same_Origin_When_First_Target_Stack_Trace_Is_Same_But_Exceptions_Differ()
+        public void Should_Have_Different_Origin_When_First_Target_Stack_Trace_Is_Same_But_Exceptions_Differ()
         {
             var exceptionA = GetVariableSystemException(parseException: true);
             var loggingPropertiesA = new LoggingEventPropertiesBuilder()
