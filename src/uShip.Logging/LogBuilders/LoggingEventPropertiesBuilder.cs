@@ -176,8 +176,13 @@ namespace uShip.Logging.LogBuilders
             var targetStackframeNamespaces = uShipLogging.Config.TargetStackTraces
                 .Cast<uShipLoggingConfigurationSection.TargetStackTracesElementCollection.AddElement>()
                 .Select(x => x.RootNamespace);
+            var excludedStackframeNamespaces = uShipLogging.Config.ExcludedStackTraces
+                .Cast<uShipLoggingConfigurationSection.ExcludedStackTracesElementCollection.AddElement>()
+                .Select(x => x.RootNamespace);
             var targetStacktraceFrame = stacktraceFrames.FirstOrDefault(x => 
-                targetStackframeNamespaces.Any(rootNamespace => x.ToDescription().StartsWith(rootNamespace)));
+                targetStackframeNamespaces.Any(rootNamespace => x.ToDescription().StartsWith(rootNamespace))
+                && !excludedStackframeNamespaces.Any(rootNamespace => x.ToDescription().StartsWith(rootNamespace))
+                );
             if (targetStacktraceFrame != null)
             {
                 return targetStacktraceFrame.ToDescription();

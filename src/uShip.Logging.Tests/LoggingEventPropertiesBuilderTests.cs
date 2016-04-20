@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using uShip.Logging.LogBuilders;
+using uShip.Logging.Tests.Common;
 
 namespace uShip.Logging.Tests
 {
@@ -70,8 +71,24 @@ namespace uShip.Logging.Tests
                     .WithUniqueOrigin("This is a custom message", exceptionA)
                     .Build();
             var loggingPropertiesB = new LoggingEventPropertiesBuilder()
-                    .WithException(exceptionA)
+                    .WithException(exceptionB)
                     .WithUniqueOrigin("This is a custom message", exceptionB)
+                    .Build();
+            Assert.AreEqual(loggingPropertiesA["Origin"].ToString(), loggingPropertiesB["Origin"].ToString());
+        }
+
+        [Test]
+        public void Should_Have_Same_Origin_When_Exception_Thrown_From_And_Not_From_Excluded_Method()
+        {
+            var exceptionA = GetVariableSystemException(parseException: true);
+            var exceptionB = GetVariableSystemException(parseException: true, throwViaMethod: true);
+            var loggingPropertiesA = new LoggingEventPropertiesBuilder()
+                    .WithException(exceptionA)
+                    .WithUniqueOrigin(string.Empty, exceptionA)
+                    .Build();
+            var loggingPropertiesB = new LoggingEventPropertiesBuilder()
+                    .WithException(exceptionB)
+                    .WithUniqueOrigin(string.Empty, exceptionB)
                     .Build();
             Assert.AreEqual(loggingPropertiesA["Origin"].ToString(), loggingPropertiesB["Origin"].ToString());
         }
@@ -106,10 +123,23 @@ namespace uShip.Logging.Tests
             throw new Exception("This shouldn't occur. You changed this test to not throw.");
         }
 
-        private Exception GetVariableSystemException(bool parseException = false, bool argumentException = false)
+        private Exception GetVariableSystemException(bool parseException = false, bool argumentException = false, bool throwViaMethod = false)
         {
+            if (throwViaMethod)
+            {
+                try
+                {
+                    ExceptionThrower.ThrowException();
+                }
+                catch (Exception ex)
+                {
+                    return ex;
+                }
+            }
+
             try
             {
+                
                 if (parseException)
                 {
                     // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
@@ -128,6 +158,17 @@ namespace uShip.Logging.Tests
             }
 
             throw new Exception("This shouldn't occur. You changed this test to not throw.");
+        }
+    }
+
+    namespace Common
+    {
+        public class ExceptionThrower
+        {
+            public static void ThrowException()
+            {
+                int.Parse(null);
+            }
         }
     }
 }

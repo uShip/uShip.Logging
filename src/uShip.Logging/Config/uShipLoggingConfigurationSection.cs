@@ -104,6 +104,16 @@ namespace uShip.Logging
             }
         }
 
+        [System.Configuration.ConfigurationPropertyAttribute("excludedStackTraces")]
+        [System.Configuration.ConfigurationCollectionAttribute(typeof(ExcludedStackTracesElementCollection.AddElement), AddItemName = "add")]
+        public ExcludedStackTracesElementCollection ExcludedStackTraces
+        {
+            get
+            {
+                return ((ExcludedStackTracesElementCollection)(this["excludedStackTraces"]));
+            }
+        }
+
         public sealed partial class JsonReplacementsElementCollection : System.Configuration.ConfigurationElementCollection
         {
 
@@ -222,6 +232,45 @@ namespace uShip.Logging
         }
 
         public sealed partial class TargetStackTracesElementCollection : System.Configuration.ConfigurationElementCollection
+        {
+
+            public AddElement this[int i]
+            {
+                get
+                {
+                    return ((AddElement)(this.BaseGet(i)));
+                }
+            }
+
+            protected override System.Configuration.ConfigurationElement CreateNewElement()
+            {
+                return new AddElement();
+            }
+
+            protected override object GetElementKey(System.Configuration.ConfigurationElement element)
+            {
+                return ((AddElement)(element)).RootNamespace;
+            }
+
+            public sealed partial class AddElement : System.Configuration.ConfigurationElement
+            {
+
+                [System.Configuration.ConfigurationPropertyAttribute("rootNamespace", IsRequired = true)]
+                public string RootNamespace
+                {
+                    get
+                    {
+                        return ((string)(this["rootNamespace"]));
+                    }
+                    set
+                    {
+                        this["rootNamespace"] = value;
+                    }
+                }
+            }
+        }
+
+        public sealed partial class ExcludedStackTracesElementCollection : System.Configuration.ConfigurationElementCollection
         {
 
             public AddElement this[int i]
