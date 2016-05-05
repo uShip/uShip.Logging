@@ -184,7 +184,7 @@ namespace uShip.Logging
                     }
                     catch (Exception ex)
                     {
-                        loggingEvent = HandlePropertiesBuildingException(ex);
+                        loggingEvent = HandlePropertiesBuildingException(ex, _severity.Value);
                     }
 
                     try
@@ -208,7 +208,7 @@ namespace uShip.Logging
                 }
             }
 
-            private LoggingEvent HandlePropertiesBuildingException(Exception ex)
+            private LoggingEvent HandlePropertiesBuildingException(Exception ex, Severity severity)
             {
                 var properties = new PropertiesDictionary();
                 if (_exception != null)
@@ -237,7 +237,7 @@ namespace uShip.Logging
                 {
                     Message = "Error building log properties",
                     Properties = properties,
-                    Level = Level.Error
+                    Level = severity.ToLog4NetLevel()
                 };
                 return new LoggingEvent(eventData);
             }
