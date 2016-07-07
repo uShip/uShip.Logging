@@ -4,8 +4,8 @@
     {
         public FluentLoggerOptions()
         {
-            TruncateRequestBodyCharactersTo = 1000;
-            TruncateResponseBodyCharactersTo = 1000;
+            TruncateRequestBodyCharactersTo = 2000;
+            TruncateResponseBodyCharactersTo = 2000;
         }
 
         /// <summary>

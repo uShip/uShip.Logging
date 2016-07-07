@@ -319,13 +319,13 @@ namespace uShip.Logging.LogBuilders
             return this;
         }
 
-        private static string Truncate(string input, int? length)
+        private static string Truncate(string input, int? maxLength)
         {
-            if (!length.HasValue || input == null) return input;
-            if (length >= input.Length) return input;
-            if (length.Value < 0) throw new ArgumentOutOfRangeException("length", "Truncate Length must be a non-negative number");
+            if (!maxLength.HasValue || input == null) return input;
+            if (maxLength >= input.Length) return input;
+            if (maxLength.Value < 0) throw new ArgumentOutOfRangeException("maxLength", "Truncate Length must be a non-negative number");
 
-            return input.Substring(0, length.Value);
+            return input.Substring(0, maxLength.Value) + "  #truncated#";
         }
 
         private string GetCallingIpAddress(HttpContextBase context)
