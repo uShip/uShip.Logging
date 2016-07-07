@@ -120,21 +120,26 @@ namespace uShip.Logging
         /// Fluent interface for adding the request to the log.
         /// </summary>
         /// <param name="request">The request to pull data from</param>
-        /// <param name="truncateBodyToLength">The length to truncate, defaulted to 1000 because UDP on our network fails.  Set to null to disable truncation.</param>
         /// <remarks>Replaces the default <see cref="HttpContext.Request"/> from <see cref="HttpContext.Current"/> if not null.</remarks>
         [Pure]
         [JetBrains.Annotations.Pure]
-        IFluentLoggerWriter Request(HttpRequestBase request, int? truncateBodyToLength = 1000);
+        IFluentLoggerWriter Request(HttpRequestBase request);
 
         /// <summary>
         /// Fluent interface for adding the response to the log.
         /// </summary>
         /// <param name="response">The response to pull data from</param>
-        /// <param name="truncateBodyToLength">The length to truncate, defaulted to 1000 because UDP on our network fails.  Set to null to disable truncation.</param>
         /// <remarks>Replaces the default <see cref="HttpContext.Response"/> from <see cref="HttpContext.Current"/> if not null.</remarks>
         [Pure]
         [JetBrains.Annotations.Pure]
-        IFluentLoggerWriter Response(HttpResponseBase response, int? truncateBodyToLength = 1000);
+        IFluentLoggerWriter Response(HttpResponseBase response);
+
+        /// <summary>
+        /// This method allows for more customizable options to be added easily to the library in a reverse-compatible way
+        /// </summary>
+        [Pure]
+        [JetBrains.Annotations.Pure]
+        IFluentLoggerWriter AdvancedOptions(FluentLoggerOptions options);
 
         /// <summary>
         /// Fluent interface for removes bodies the request to the log.

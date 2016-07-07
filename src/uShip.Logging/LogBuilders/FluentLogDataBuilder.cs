@@ -24,10 +24,9 @@ namespace uShip.Logging
             private readonly IDictionary<string, object> _data = new Dictionary<string, object>();
             private readonly IList<string> _tags = new List<string>();
             private HttpRequestBase _request;
-            private int? _requestTruncateLength;
             private HttpResponseBase _response;
-            private int? _responseTruncateLength;
             private bool _shouldOmitRequestBody;
+            private FluentLoggerOptions _advancedOptions = new FluentLoggerOptions();
 
             public FluentLogDataBuilder(ILog log, LoggingEventDataBuilder loggingEventDataBuilder)
             {
@@ -129,17 +128,21 @@ namespace uShip.Logging
                 return this;
             }
 
-            public IFluentLoggerWriter Request(HttpRequestBase request, int? truncateBodyToLength = 1000)
+            public IFluentLoggerWriter Request(HttpRequestBase request)
             {
                 _request = request;
-                _requestTruncateLength = truncateBodyToLength;
                 return this;
             }
 
-            public IFluentLoggerWriter Response(HttpResponseBase response, int? truncateBodyToLength = 1000)
+            public IFluentLoggerWriter Response(HttpResponseBase response)
             {
                 _response = response;
-                _responseTruncateLength = truncateBodyToLength;
+                return this;
+            }
+
+            public IFluentLoggerWriter AdvancedOptions(FluentLoggerOptions options)
+            {
+                _advancedOptions.Merge(options);
                 return this;
             }
 
@@ -173,10 +176,10 @@ namespace uShip.Logging
                             .IncludeBasicRequestInfo();
                         if (!_shouldOmitRequestBody)
                         {
-                            loggingEventContextBuilder = loggingEventContextBuilder.IncludeRequestBody(_requestTruncateLength);
+                            loggingEventContextBuilder = loggingEventContextBuilder.IncludeRequestBody(_advancedOptions.TruncateRequestBodyCharactersTo);
                         }
                         var properties = loggingEventContextBuilder
-                            .IncludeResponse(_responseTruncateLength)
+                            .IncludeResponse(_advancedOptions.TruncateResponseBodyCharactersTo)
                             .FinishContext()
                             .WithTags(_tags)
                             .WithAdditionalData(_data)
