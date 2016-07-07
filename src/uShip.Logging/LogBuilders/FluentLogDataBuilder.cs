@@ -24,7 +24,9 @@ namespace uShip.Logging
             private readonly IDictionary<string, object> _data = new Dictionary<string, object>();
             private readonly IList<string> _tags = new List<string>();
             private HttpRequestBase _request;
+            private int? _requestTruncateLength;
             private HttpResponseBase _response;
+            private int? _responseTruncateLength;
             private bool _shouldOmitRequestBody;
 
             public FluentLogDataBuilder(ILog log, LoggingEventDataBuilder loggingEventDataBuilder)
@@ -127,15 +129,17 @@ namespace uShip.Logging
                 return this;
             }
 
-            public IFluentLoggerWriter Request(HttpRequestBase request)
+            public IFluentLoggerWriter Request(HttpRequestBase request, int? truncateBodyToLength = 1000)
             {
                 _request = request;
+                _requestTruncateLength = truncateBodyToLength;
                 return this;
             }
 
-            public IFluentLoggerWriter Response(HttpResponseBase response)
+            public IFluentLoggerWriter Response(HttpResponseBase response, int? truncateBodyToLength = 1000)
             {
                 _response = response;
+                _responseTruncateLength = truncateBodyToLength;
                 return this;
             }
 
@@ -169,10 +173,10 @@ namespace uShip.Logging
                             .IncludeBasicRequestInfo();
                         if (!_shouldOmitRequestBody)
                         {
-                            loggingEventContextBuilder = loggingEventContextBuilder.IncludeRequestBody();
+                            loggingEventContextBuilder = loggingEventContextBuilder.IncludeRequestBody(_requestTruncateLength);
                         }
                         var properties = loggingEventContextBuilder
-                            .IncludeResponse()
+                            .IncludeResponse(_responseTruncateLength)
                             .FinishContext()
                             .WithTags(_tags)
                             .WithAdditionalData(_data)

@@ -35,8 +35,8 @@ namespace uShip.Logging.LogBuilders
         ILoggingEventContextBuilder WithResponse(HttpResponseBase response);
 
         ILoggingEventContextBuilder IncludeBasicRequestInfo();
-        ILoggingEventContextBuilder IncludeRequestBody();
-        ILoggingEventContextBuilder IncludeResponse();
+        ILoggingEventContextBuilder IncludeRequestBody(int? requestTruncateLength);
+        ILoggingEventContextBuilder IncludeResponse(int? responseTruncateLength);
 
         ILoggingEventPropertiesBuilder FinishContext();
     }
@@ -198,7 +198,7 @@ namespace uShip.Logging.LogBuilders
                 return string.Join(string.Empty, parts);
             }
         }
-        
+
         public ILoggingEventPropertiesBuilder WithAdditionalData(IDictionary<string, object> data)
         {
             if (data != null)
@@ -275,7 +275,7 @@ namespace uShip.Logging.LogBuilders
         {
             if (response != null)
             {
-                _response = response;                
+                _response = response;
             }
             return this;
         }
@@ -298,11 +298,11 @@ namespace uShip.Logging.LogBuilders
             return this;
         }
 
-        public ILoggingEventContextBuilder IncludeRequestBody()
+        public ILoggingEventContextBuilder IncludeRequestBody(int? requestTruncateLength)
         {
             if (_request == null) return this;
-            
-            Func<string, string> sanitize = s => 
+
+            Func<string, string> sanitize = s =>
                 s.IfNotNull(x => x
                     .SanitizeSensitiveInfo()).IfNotNull(x => x
                         .RemoveViewState());
@@ -313,10 +313,19 @@ namespace uShip.Logging.LogBuilders
                 var content = !string.IsNullOrEmpty(requestForm)
                     ? requestForm
                     : _request.GetContent();
-                return sanitize(content);
+                return Truncate(sanitize(content), requestTruncateLength);
             });
-            
+
             return this;
+        }
+
+        private static string Truncate(string input, int? length)
+        {
+            if (!length.HasValue || input == null) return input;
+            if (length >= input.Length) return input;
+            if (length.Value < 0) throw new ArgumentOutOfRangeException("length", "Truncate Length must be a non-negative number");
+
+            return input.Substring(0, length.Value);
         }
 
         private string GetCallingIpAddress(HttpContextBase context)
@@ -344,7 +353,7 @@ namespace uShip.Logging.LogBuilders
             return context.Request["REMOTE_ADDR"];
         }
 
-        public ILoggingEventContextBuilder IncludeResponse()
+        public ILoggingEventContextBuilder IncludeResponse(int? responseTruncateLength)
         {
             if (_response != null)
             {
@@ -354,7 +363,7 @@ namespace uShip.Logging.LogBuilders
                 if (outputStream != null && outputStream.CanRead)
                 {
                     outputStream.Position = 0;
-                    _props["ResponseBody"] = outputStream.ReadAllText();
+                    _props["ResponseBody"] = Truncate(outputStream.ReadAllText(), responseTruncateLength);
                 }
 
                 _props.SafeSetProp("ResponseHeaders", () => _response.Headers.ToQuery());
