@@ -109,6 +109,94 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
+        public void When_setting_truncate_settings_body_should_respect_that_content_length()
+        {
+            var endsWith = "#truncated#";
+            var appendedLength = "  ".Length + endsWith.Length;
+
+            //Arrange
+            var longBody = string.Join("", "password".Select(x => "p@ssword" + x));
+
+            var logFactory = Substitute.For<LogFactory>();
+            var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
+            var logger = new Logger(logFactory, loggingEventDataBuilder);
+
+
+            var requestBase = CreatePostHttpRequestBaseWithFakeContext(longBody);
+
+            var responseBase = Substitute.For<HttpResponseBase>();
+            responseBase.StatusCode.Returns(201);
+            responseBase.Headers.Returns(new NameValueCollection { { "X-Test", "value" } });
+            responseBase.OutputStream.Returns(longBody.ToStream());
+
+            //Act
+            var fluentLoggerOptions = new FluentLoggerOptions
+            {
+                TruncateRequestBodyCharactersTo = 13,
+                TruncateResponseBodyCharactersTo = 21
+            };
+            logger.Message("Truncate testing")
+                .AdvancedOptions(fluentLoggerOptions)
+                .Request(requestBase)
+                .Response(responseBase)
+                .Write();
+
+            var properties = GetPropertiesDictionary(loggingEventDataBuilder);
+
+            //Assert
+            var requestBody = properties["RequestBody"].ToString();
+            var responseBody = properties["ResponseBody"].ToString();
+
+            requestBody.Should().EndWithEquivalent(endsWith);
+            requestBody.Length.Should().Be(fluentLoggerOptions.TruncateRequestBodyCharactersTo +appendedLength);
+            responseBody.Should().EndWithEquivalent(endsWith);
+            responseBody.Length.Should().Be(fluentLoggerOptions.TruncateResponseBodyCharactersTo + appendedLength);
+        }
+
+        [Test]
+        public void When_setting_truncate_settings_body_should_not_be_truncated_if_equal_to_length()
+        {
+            var endsWith = "#truncated#";
+
+            //Arrange
+            var longBody = string.Join("", "password".Select(x => "p@ssword" + x));
+
+            var logFactory = Substitute.For<LogFactory>();
+            var loggingEventDataBuilder = Substitute.For<LoggingEventDataBuilder>();
+            var logger = new Logger(logFactory, loggingEventDataBuilder);
+
+
+            var requestBase = CreatePostHttpRequestBaseWithFakeContext(longBody);
+
+            var responseBase = Substitute.For<HttpResponseBase>();
+            responseBase.StatusCode.Returns(201);
+            responseBase.Headers.Returns(new NameValueCollection { { "X-Test", "value" } });
+            responseBase.OutputStream.Returns(longBody.ToStream());
+
+            //Act
+            logger.Message("Truncate testing")
+                .AdvancedOptions(new FluentLoggerOptions
+                {
+                    TruncateRequestBodyCharactersTo = longBody.Length,
+                    TruncateResponseBodyCharactersTo = longBody.Length
+                })
+                .Request(requestBase)
+                .Response(responseBase)
+                .Write();
+
+            var properties = GetPropertiesDictionary(loggingEventDataBuilder);
+
+            //Assert
+            var requestBody = properties["RequestBody"].ToString();
+            var responseBody = properties["ResponseBody"].ToString();
+
+            requestBody.Should().NotContainEquivalentOf(endsWith);
+            requestBody.Length.Should().Be(longBody.Length);
+            responseBody.Should().NotContainEquivalentOf(endsWith);
+            responseBody.Length.Should().Be(longBody.Length);
+        }
+
+        [Test]
         public void Should_be_able_to_log_without_an_HttpContext()
         {
             var logFactory = Substitute.For<LogFactory>();
