@@ -29,7 +29,7 @@ namespace uShip.Logging.LogBuilders
 
         private class JsonReplacement : RegexReplacement
         {
-            private const string JsonPattern = @"([""]?{0}[""]?\s*:\s*)(?:(?=[""])([""])[^""\r\n]*([""]?)|[^,""\r\n]*)";
+            private const string JsonPattern = @"([\\]?[""]?{0}(""|\\"")?\s*:\s*)(?:(?=[\\]?[""])([\\]?[""])[^""\r\n]*([""]?)|[^,""\r\n]*)";
             private const string JsonValueObfuscation = "$1$2****$3";
 
             public JsonReplacement(string name)
