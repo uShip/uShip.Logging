@@ -55,19 +55,4 @@ namespace uShip.Logging
                             HttpUtility.UrlEncode(nameValueCollection[key]))));
         }
     }
-
-    internal static class PropertiesDictionaryExtensions
-    {
-        internal static void SafeSetProp(this PropertiesDictionary props, string propKey, Func<string> valueGetter)
-        {
-            try
-            {
-                props[propKey] = valueGetter();
-            }
-            catch (Exception ex)
-            {
-                props[propKey] = string.Format("Failed setting {0} key in logger because {1}", propKey, ex.Message);
-            }
-        }
-    }
 }
