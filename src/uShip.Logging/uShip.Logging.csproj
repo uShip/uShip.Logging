@@ -87,6 +87,7 @@
     <Compile Include="LogBuilders\LoggingEventDataBuilder.cs" />
     <Compile Include="LogBuilders\LoggingEventPropertiesBuilder.cs" />
     <Compile Include="LogBuilders\MinimalLogDataBuilder.cs" />
+    <Compile Include="LogBuilders\PropertiesDictionaryExtensions.cs" />
     <Compile Include="LogFactory.cs" />
     <Compile Include="LogType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
