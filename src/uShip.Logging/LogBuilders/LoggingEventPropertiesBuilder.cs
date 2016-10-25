@@ -66,6 +66,8 @@ namespace uShip.Logging.LogBuilders
         public MethodBase TargetSite { get; set; }
     }
 
+
+
     internal class LoggingEventPropertiesBuilder : ILoggingEventPropertiesBuilder, ILoggingEventContextBuilder
     {
         private readonly PropertiesDictionary _props = new PropertiesDictionary();
@@ -74,23 +76,23 @@ namespace uShip.Logging.LogBuilders
 
         public ILoggingEventPropertiesBuilder WithMachineName()
         {
-            _props["MachineName"] = Environment.MachineName;
+            _props.Set("MachineName", Environment.MachineName);
             return this;
         }
 
         public ILoggingEventPropertiesBuilder WithException(Exception exception)
         {
             LogEventType = GetLogType(exception);
-            _props["LogType"] = LogEventType.ToString();
+            _props.Set("LogType", LogEventType.ToString());
             if (exception != null)
             {
-                _props["Exception"] = new LoggableException(exception);
+                _props.Set("Exception", new LoggableException(exception));
 
                 var httpException = exception as HttpException;
                 if (httpException != null)
                 {
-                    _props["ExceptionMessage"] = httpException.Message;
-                    _props["ErrorCode"] = httpException.ErrorCode;
+                    _props.Set("ExceptionMessage", httpException.Message);
+                    _props.Set("ErrorCode", httpException.ErrorCode);
                 }
             }
 
@@ -103,26 +105,26 @@ namespace uShip.Logging.LogBuilders
             var version = pathSplit.FirstOrDefault(x =>
             {
                 int v;
-                return int.TryParse(x, out v);
+                return Int32.TryParse(x, out v);
             });
 
-            if (!string.IsNullOrEmpty(version))
+            if (!String.IsNullOrEmpty(version))
             {
-                _props["DeployVersion"] = version;
+                _props.Set("DeployVersion", version);
             }
             return this;
         }
 
         public ILoggingEventPropertiesBuilder WithSqlData(string sql, IEnumerable<KeyValuePair<string, object>> sqlParameters)
         {
-            if (!string.IsNullOrEmpty(sql))
+            if (!String.IsNullOrEmpty(sql))
             {
                 _sql = sql;
-                _props["Sql"] = sql;
+                _props.Set("Sql", sql);
             }
             if (sqlParameters != null)
             {
-                _props["SqlParameters"] = sqlParameters.ToDictionary(x => x.Key, x => x.Value == null ? "null" : x.Value.ToString());
+                _props.Set("SqlParameters", sqlParameters.ToDictionary(x => x.Key, x => x.Value == null ? "null" : x.Value));
             }
             return this;
         }
@@ -131,14 +133,14 @@ namespace uShip.Logging.LogBuilders
         {
             if (exception != null)
             {
-                return !string.IsNullOrEmpty(_sql) ? LogType.SqlException : LogType.Exception;
+                return !String.IsNullOrEmpty(_sql) ? LogType.SqlException : LogType.Exception;
             }
             return LogType.Message;
         }
 
         public ILoggingEventPropertiesBuilder WithUniqueOrigin(string message, Exception exception)
         {
-            _props["Origin"] = GetUniqueOrigin(LogEventType ?? GetLogType(exception), message, exception);
+            _props.Set("Origin", GetUniqueOrigin(LogEventType ?? GetLogType(exception), message, exception));
             return this;
         }
 
@@ -152,12 +154,12 @@ namespace uShip.Logging.LogBuilders
                     break;
                 case LogType.Exception:
                     var throwingMethod = GetThrowingMethod(exception);
-                    var hasCustomMessage = !string.IsNullOrEmpty(message);
+                    var hasCustomMessage = !String.IsNullOrEmpty(message);
                     // a custom message always determines uniqueness
-                    uniqueOrigin = hasCustomMessage ? message : string.Format("{0};{1}", exception.Message, throwingMethod);
+                    uniqueOrigin = hasCustomMessage ? message : String.Format("{0};{1}", exception.Message, throwingMethod);
                     break;
                 case LogType.SqlException:
-                    uniqueOrigin = string.Format("{0};{1}", exception.Message, _sql);
+                    uniqueOrigin = String.Format("{0};{1}", exception.Message, _sql);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type");
@@ -167,9 +169,9 @@ namespace uShip.Logging.LogBuilders
 
         private string GetThrowingMethod(Exception exception)
         {
-            if (string.IsNullOrEmpty(exception.StackTrace))
+            if (String.IsNullOrEmpty(exception.StackTrace))
             {
-                return string.Empty;
+                return String.Empty;
             }
             var stacktrace = new StackTrace(exception);
             var stacktraceFrames = stacktrace.GetFrames().ToList();
@@ -195,8 +197,13 @@ namespace uShip.Logging.LogBuilders
             using (var md5Hash = MD5.Create())
             {
                 var parts = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(source)).Select(x => x.ToString("x2"));
-                return string.Join(string.Empty, parts);
+                return String.Join(String.Empty, parts);
             }
+        }
+
+        private static string Sanitize(string input)
+        {
+            return input.IfNotNull(x => x.SanitizeSensitiveInfo().RemoveViewState());
         }
 
         public ILoggingEventPropertiesBuilder WithAdditionalData(IDictionary<string, object> data)
@@ -204,7 +211,7 @@ namespace uShip.Logging.LogBuilders
             if (data != null)
             {
                 if (data.ContainsKey("AdditionalInfo"))
-                    _props["Parameters"] = data["AdditionalInfo"];
+                    _props.Set("Parameters", data["AdditionalInfo"]);
 
                 foreach (var datum in data)
                 {
@@ -214,7 +221,8 @@ namespace uShip.Logging.LogBuilders
                         duplicatePropsException.Data.Add("Key", datum.Key);
                         throw duplicatePropsException;
                     }
-                    _props[datum.Key] = datum.Value;
+
+                    _props.Set(datum.Key, datum.Value);
                 }
             }
             return this;
@@ -224,7 +232,7 @@ namespace uShip.Logging.LogBuilders
         {
             if (tags != null)
             {
-                _props["Tags"] = tags;
+                _props.Set("Tags", tags);
             }
             return this;
         }
@@ -256,7 +264,7 @@ namespace uShip.Logging.LogBuilders
             }
             catch (Exception)
             {
-                _props["HttpRequest"] = "Unable to read request instance";
+                _props.Set("HttpRequest", "Unable to read request instance");
             }
 
             return this;
@@ -284,10 +292,10 @@ namespace uShip.Logging.LogBuilders
         {
             if (_request != null)
             {
-                _props["Url"] = _request.Url.OriginalString.CleanQueryString();
-                _props["UserAgent"] = _request.UserAgent;
+                _props.Set("Url", _request.Url.OriginalString.CleanQueryString());
+                _props.Set("UserAgent", _request.UserAgent);
                 _props.SafeSetProp("IPAddress", () => GetCallingIpAddress(_context));
-                _props["RequestMethod"] = _request.HttpMethod;
+                _props.Set("RequestMethod", _request.HttpMethod);
 
                 _props.SafeSetProp("RequestHeaders", () => _request.Headers.ToQuery());
                 _props.SafeSetProp("Referrer", () => _request.ServerVariables["HTTP_REFERER"].CleanQueryString());
@@ -310,7 +318,7 @@ namespace uShip.Logging.LogBuilders
             _props.SafeSetProp("RequestBody", () =>
             {
                 var requestForm = _request.Form.IfNotNull(x => x.ToString());
-                var content = !string.IsNullOrEmpty(requestForm)
+                var content = !String.IsNullOrEmpty(requestForm)
                     ? requestForm
                     : _request.GetContent();
                 return Truncate(sanitize(content), requestTruncateLength);
@@ -332,21 +340,21 @@ namespace uShip.Logging.LogBuilders
         {
             if (context == null || context.Request == null)
             {
-                return string.Empty;
+                return String.Empty;
             }
-            if (!string.IsNullOrEmpty(context.Request["HTTP_TRUE_CLIENT_IP"]))
+            if (!String.IsNullOrEmpty(context.Request["HTTP_TRUE_CLIENT_IP"]))
             {
                 return context.Request["HTTP_TRUE_CLIENT_IP"];
             }
-            if (!string.IsNullOrEmpty(context.Request["HTTP_X_FORWARDED_FOR"]))
+            if (!String.IsNullOrEmpty(context.Request["HTTP_X_FORWARDED_FOR"]))
             {
                 return context.Request["HTTP_X_FORWARDED_FOR"].Split(',')[0];
             }
-            if (!string.IsNullOrEmpty(context.Request["HTTP_X_CLIENTSIDE"]))
+            if (!String.IsNullOrEmpty(context.Request["HTTP_X_CLIENTSIDE"]))
             {
                 return context.Request["HTTP_X_CLIENTSIDE"];
             }
-            if (!string.IsNullOrEmpty(context.Request["HTTP_X_CLUSTER_CLIENT_IP"]))
+            if (!String.IsNullOrEmpty(context.Request["HTTP_X_CLUSTER_CLIENT_IP"]))
             {
                 return context.Request["HTTP_X_CLUSTER_CLIENT_IP"];
             }
@@ -357,13 +365,13 @@ namespace uShip.Logging.LogBuilders
         {
             if (_response != null)
             {
-                _props["StatusCode"] = _response.StatusCode;
+                _props.Set("StatusCode", _response.StatusCode);
 
                 var outputStream = _response.OutputStream;
                 if (outputStream != null && outputStream.CanRead)
                 {
                     outputStream.Position = 0;
-                    _props["ResponseBody"] = Truncate(outputStream.ReadAllText(), responseTruncateLength);
+                    _props.Set("ResponseBody", Truncate(outputStream.ReadAllText(), responseTruncateLength));
                 }
 
                 _props.SafeSetProp("ResponseHeaders", () => _response.Headers.ToQuery());
