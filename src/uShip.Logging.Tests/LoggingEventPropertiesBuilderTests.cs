@@ -27,6 +27,19 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
+        public void Should_sanitize_passwords()
+        {
+            var loggingProperties = new LoggingEventPropertiesBuilder()
+                    .Build();
+
+            loggingProperties.Set("someInfo", "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"Password\\\":\\\"meadows2014\\\"");
+            loggingProperties.Set("moreInfo", "\"emailAddress\":\"hello@meadowshotel.com\",\"password\":\"meadows2014\"");
+
+            Assert.AreEqual(loggingProperties["someInfo"], "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"************\\\":\\\"****\\\"");
+            Assert.AreEqual(loggingProperties["moreInfo"], "\"emailAddress\":\"hello@meadowshotel.com\",\"************\":\"****\"");
+        }
+
+        [Test]
         public void Should_Have_Different_Origin_When_First_Target_Stack_Trace_Is_Same_But_Exceptions_Differ()
         {
             var exceptionA = GetVariableSystemException(parseException: true);
