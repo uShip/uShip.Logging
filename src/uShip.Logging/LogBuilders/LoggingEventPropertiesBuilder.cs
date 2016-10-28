@@ -201,11 +201,6 @@ namespace uShip.Logging.LogBuilders
             }
         }
 
-        private static string Sanitize(string input)
-        {
-            return input.IfNotNull(x => x.SanitizeSensitiveInfo().RemoveViewState());
-        }
-
         public ILoggingEventPropertiesBuilder WithAdditionalData(IDictionary<string, object> data)
         {
             if (data != null)
