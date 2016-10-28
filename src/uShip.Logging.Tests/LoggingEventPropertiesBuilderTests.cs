@@ -40,6 +40,19 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
+        public void Should_sanitize_creditCard()
+        {
+            var loggingProperties = new LoggingEventPropertiesBuilder()
+                    .Build();
+
+            loggingProperties.Set("someInfo", "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"creditCard\\\":\\\"1234123412341234\\\"");
+            loggingProperties.Set("moreInfo", "\"emailAddress\":\"hello@meadowshotel.com\",\"creditCard\":\"1234123412341234\"");
+
+            Assert.AreEqual(loggingProperties["someInfo"], "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"************\\\":\\\"****\\\"");
+            Assert.AreEqual(loggingProperties["moreInfo"], "\"emailAddress\":\"hello@meadowshotel.com\",\"************\":\"****\"");
+        }
+
+        [Test]
         public void Should_Have_Different_Origin_When_First_Target_Stack_Trace_Is_Same_But_Exceptions_Differ()
         {
             var exceptionA = GetVariableSystemException(parseException: true);
