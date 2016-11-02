@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using log4net.Util;
 using uShip.Logging.Extensions;
 
@@ -11,14 +14,49 @@ namespace uShip.Logging.LogBuilders
             return input.IfNotNull(x => x.SanitizeSensitiveInfo().RemoveViewState());
         }
 
+        public static IDictionary NewSanitizedDictionary(this IDictionary data)
+        {
+            if (data == null)
+            {
+                return null;
+            }
+
+            IDictionary sanitizedData = new Dictionary<String, object>();
+
+            foreach (var key in data.Keys)
+            {
+                if (data[key] == null)
+                {
+                    continue;
+                }
+
+                if (data[key] is string && LogDataSanitizeExtensions.SensitiveFieldNames.Contains(key))
+                {
+                    sanitizedData[key] = LogDataSanitizeExtensions.ScrubbedConstant;
+                }
+                else if (data[key] is IDictionary)
+                {
+                    sanitizedData[key] = NewSanitizedDictionary((IDictionary)data[key]);
+                }
+            }
+
+            return sanitizedData;
+        }
+
         public static void Set(this PropertiesDictionary dictionary, string key, object value)
         {
             if (value is string)
             {
                 dictionary[key] = Sanitize(value.ToString());
-                return;
             }
-            dictionary[key] = value;
+            else if (value is IDictionary)
+            {
+                dictionary[key] = ((IDictionary) dictionary[key]).NewSanitizedDictionary();
+            }
+            else
+            {
+                dictionary[key] = value;
+            }  
         }
 
         internal static void SafeSetProp(this PropertiesDictionary props, string propKey, Func<string> valueGetter)
@@ -29,7 +67,7 @@ namespace uShip.Logging.LogBuilders
             }
             catch (Exception ex)
             {
-                props.Set(propKey, string.Format("Failed setting {0} key in logger because {1}", propKey, ex.Message));
+                props.Set(propKey, String.Format("Failed setting {0} key in logger because {1}", propKey, ex.Message));
             }
         }
     }

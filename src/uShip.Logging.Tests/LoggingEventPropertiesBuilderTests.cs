@@ -1,5 +1,8 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using FluentAssertions;
 using uShip.Logging.LogBuilders;
 using uShip.Logging.Tests.Common;
 
@@ -50,6 +53,31 @@ namespace uShip.Logging.Tests
 
             Assert.AreEqual(loggingProperties["someInfo"], "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"************\\\":\\\"****\\\"");
             Assert.AreEqual(loggingProperties["moreInfo"], "\"emailAddress\":\"hello@meadowshotel.com\",\"************\":\"****\"");
+        }
+
+        [Test]
+        public void Should_sanitiz_credit_cards_from_loggable_exception()
+        {
+            var loggingProperties = new LoggingEventPropertiesBuilder()
+                    .Build();
+            var exception = new Exception();
+            exception.Data["user"] = new Dictionary<string, string>()
+            {
+                {"password", "foobar484634198"}
+            };
+            exception.Data["userPreferences"] = new Dictionary<string, string>()
+            {
+                {"currency", "USD"},
+                {"siteId", "UnitedStates"},
+                {"language", "en-US"},
+                {"timeZone", "UTC"},
+            };
+            exception.Data["profile"] = new Dictionary<string, string>();
+
+            
+            var loggableException = new LoggableException(exception);
+            loggableException.SanitizeData();
+            ((IDictionary)loggableException.Data["user"])["password"].ShouldBeEquivalentTo("****");
         }
 
         [Test]

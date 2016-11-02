@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using uShip.Logging.Extensions;
 
@@ -54,7 +55,15 @@ namespace uShip.Logging.LogBuilders
             if (ex.InnerException != null)
             {
                 InnerException = new LoggableException(ex.InnerException);
+                InnerException.SanitizeData();
             }
+        }
+
+        
+
+        public void SanitizeData()
+        {
+            Data = Data.NewSanitizedDictionary();
         }
 
         public IDictionary Data { get; set; }
@@ -65,8 +74,6 @@ namespace uShip.Logging.LogBuilders
         public string ExceptionTypeName { get; set; }
         public MethodBase TargetSite { get; set; }
     }
-
-
 
     internal class LoggingEventPropertiesBuilder : ILoggingEventPropertiesBuilder, ILoggingEventContextBuilder
     {
@@ -86,7 +93,9 @@ namespace uShip.Logging.LogBuilders
             _props.Set("LogType", LogEventType.ToString());
             if (exception != null)
             {
-                _props.Set("Exception", new LoggableException(exception));
+                var loggableException = new LoggableException(exception);
+                loggableException.SanitizeData();
+                _props.Set("Exception", loggableException);
 
                 var httpException = exception as HttpException;
                 if (httpException != null)
