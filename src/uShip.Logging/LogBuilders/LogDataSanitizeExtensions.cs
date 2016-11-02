@@ -7,24 +7,6 @@ namespace uShip.Logging.LogBuilders
 {
     internal static class LogDataSanitizeExtensions
     {
-
-        public static readonly string ScrubbedConstant = "****";
-        public static readonly IReadOnlyList<string> SensitiveFieldNames =
-            uShipLogging.Config.JsonReplacements
-                .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>()
-                .Select(x => x.Field)
-                .Concat<string>(
-                    uShipLogging.Config.UrlFormEncodedReplacements
-                        .Cast<uShipLoggingConfigurationSection.UrlFormEncodedReplacementsElementCollection.AddElement>()
-                        .Select(x => x.Field))
-                .Concat<string>(
-                    uShipLogging.Config.RegexReplacements
-                        .Cast<uShipLoggingConfigurationSection.RegexReplacementsElementCollection.AddElement>()
-                        .Select(x => x.Field))
-                .OrderBy(str => str)
-                .Distinct()
-                .ToList();
-
         private static readonly RegexReplacement[] SensitiveInfoPatterns =
             uShipLogging.Config.JsonReplacements
                 .Cast<uShipLoggingConfigurationSection.JsonReplacementsElementCollection.AddElement>().Select(x => new JsonReplacement(x.Field))
@@ -49,7 +31,7 @@ namespace uShip.Logging.LogBuilders
         private class JsonReplacement : RegexReplacement
         {
             private const string JsonPattern = @"([\\]?[""]?{0}(""|\\"")?\s*:\s*)(?:(?=[\\]?[""])([\\]?[""])[^""\r\n]*([""]?)|[^,""\r\n]*)";
-            private static readonly string JsonValueObfuscation = string.Format("$1$2{0}$3", ScrubbedConstant);
+            private const string JsonValueObfuscation = "$1$2****$3";
 
             public JsonReplacement(string name)
                 : base(string.Format(JsonPattern, name), JsonValueObfuscation)

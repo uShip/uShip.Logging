@@ -46,7 +46,7 @@ namespace uShip.Logging.LogBuilders
     {
         public LoggableException(Exception ex)
         {
-            Data = ex.Data;
+            Data = ex.Data.NewSanitizedDictionary();
             Message = ex.Message;
             Source = ex.Source;
             StackTrace = ex.StackTrace;
@@ -55,15 +55,7 @@ namespace uShip.Logging.LogBuilders
             if (ex.InnerException != null)
             {
                 InnerException = new LoggableException(ex.InnerException);
-                InnerException.SanitizeData();
             }
-        }
-
-        
-
-        public void SanitizeData()
-        {
-            Data = Data.NewSanitizedDictionary();
         }
 
         public IDictionary Data { get; set; }
@@ -94,7 +86,6 @@ namespace uShip.Logging.LogBuilders
             if (exception != null)
             {
                 var loggableException = new LoggableException(exception);
-                loggableException.SanitizeData();
                 _props.Set("Exception", loggableException);
 
                 var httpException = exception as HttpException;

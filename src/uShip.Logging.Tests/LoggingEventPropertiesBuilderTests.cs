@@ -58,26 +58,16 @@ namespace uShip.Logging.Tests
         [Test]
         public void Should_sanitiz_credit_cards_from_loggable_exception()
         {
+            string expectedValue =
+                "{\"user\":{\"************\":\"****\"},\"userPreferences\":{\"currency\":\"USD\",\"siteId\":\"UnitedStates\",\"language\":\"en-US\",\"timeZone\":\"UTC\"},\"profile\":{}}";
             var loggingProperties = new LoggingEventPropertiesBuilder()
                     .Build();
             var exception = new Exception();
-            exception.Data["user"] = new Dictionary<string, string>()
-            {
-                {"password", "foobar484634198"}
-            };
-            exception.Data["userPreferences"] = new Dictionary<string, string>()
-            {
-                {"currency", "USD"},
-                {"siteId", "UnitedStates"},
-                {"language", "en-US"},
-                {"timeZone", "UTC"},
-            };
-            exception.Data["profile"] = new Dictionary<string, string>();
+            exception.Data["APIRequestContent"] =
+                "{\"user\":{\"password\":\"foobar484634198\"},\"userPreferences\":{\"currency\":\"USD\",\"siteId\":\"UnitedStates\",\"language\":\"en-US\",\"timeZone\":\"UTC\"},\"profile\":{}}";
 
-            
             var loggableException = new LoggableException(exception);
-            loggableException.SanitizeData();
-            ((IDictionary)loggableException.Data["user"])["password"].ShouldBeEquivalentTo("****");
+            loggableException.Data["APIRequestContent"].ShouldBeEquivalentTo(expectedValue);
         }
 
         [Test]

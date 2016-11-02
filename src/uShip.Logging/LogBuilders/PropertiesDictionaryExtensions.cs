@@ -29,14 +29,13 @@ namespace uShip.Logging.LogBuilders
                 {
                     continue;
                 }
-
-                if (data[key] is string && LogDataSanitizeExtensions.SensitiveFieldNames.Contains(key))
+                if (data[key] is string)
                 {
-                    sanitizedData[key] = LogDataSanitizeExtensions.ScrubbedConstant;
+                    sanitizedData[key] = Sanitize(data[key].ToString());
                 }
-                else if (data[key] is IDictionary)
+                else // expect the object to have been sanitized already
                 {
-                    sanitizedData[key] = NewSanitizedDictionary((IDictionary)data[key]);
+                    sanitizedData[key] = data[key];
                 }
             }
 
@@ -49,11 +48,11 @@ namespace uShip.Logging.LogBuilders
             {
                 dictionary[key] = Sanitize(value.ToString());
             }
-            else if (value is IDictionary)
+            else if (value is IDictionary) // Sql Params
             {
                 dictionary[key] = ((IDictionary) dictionary[key]).NewSanitizedDictionary();
             }
-            else
+            else // assume the object has been sanitized already ie LoggableException
             {
                 dictionary[key] = value;
             }  
