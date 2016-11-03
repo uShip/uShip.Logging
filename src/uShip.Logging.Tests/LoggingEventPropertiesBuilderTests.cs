@@ -1,7 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using FluentAssertions;
 using uShip.Logging.LogBuilders;
 using uShip.Logging.Tests.Common;
@@ -60,8 +58,7 @@ namespace uShip.Logging.Tests
         {
             string expectedValue =
                 "{\"user\":{\"************\":\"****\"},\"userPreferences\":{\"currency\":\"USD\",\"siteId\":\"UnitedStates\",\"language\":\"en-US\",\"timeZone\":\"UTC\"},\"profile\":{}}";
-            var loggingProperties = new LoggingEventPropertiesBuilder()
-                    .Build();
+
             var exception = new Exception();
             exception.Data["APIRequestContent"] =
                 "{\"user\":{\"password\":\"foobar484634198\"},\"userPreferences\":{\"currency\":\"USD\",\"siteId\":\"UnitedStates\",\"language\":\"en-US\",\"timeZone\":\"UTC\"},\"profile\":{}}";

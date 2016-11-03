@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
 using uShip.Logging.Extensions;
 
@@ -85,8 +84,7 @@ namespace uShip.Logging.LogBuilders
             _props.Set("LogType", LogEventType.ToString());
             if (exception != null)
             {
-                var loggableException = new LoggableException(exception);
-                _props.Set("Exception", loggableException);
+                _props.Set("Exception", new LoggableException(exception));
 
                 var httpException = exception as HttpException;
                 if (httpException != null)
