@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using FluentAssertions;
 using uShip.Logging.LogBuilders;
 using uShip.Logging.Tests.Common;
 
@@ -50,6 +51,20 @@ namespace uShip.Logging.Tests
 
             Assert.AreEqual(loggingProperties["someInfo"], "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"************\\\":\\\"****\\\"");
             Assert.AreEqual(loggingProperties["moreInfo"], "\"emailAddress\":\"hello@meadowshotel.com\",\"************\":\"****\"");
+        }
+
+        [Test]
+        public void Should_sanitize_passwords_from_loggable_exception()
+        {
+            string expectedValue =
+                "{\"user\":{\"************\":\"****\"},\"userPreferences\":{\"currency\":\"USD\",\"siteId\":\"UnitedStates\",\"language\":\"en-US\",\"timeZone\":\"UTC\"},\"profile\":{}}";
+
+            var exception = new Exception();
+            exception.Data["APIRequestContent"] =
+                "{\"user\":{\"password\":\"foobar484634198\"},\"userPreferences\":{\"currency\":\"USD\",\"siteId\":\"UnitedStates\",\"language\":\"en-US\",\"timeZone\":\"UTC\"},\"profile\":{}}";
+
+            var loggableException = new LoggableException(exception);
+            loggableException.Data["APIRequestContent"].ShouldBeEquivalentTo(expectedValue);
         }
 
         [Test]

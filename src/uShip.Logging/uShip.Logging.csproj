@@ -95,7 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Content\Web.config.transform" />
+    <None Include="Content\Web.config.transform">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="uShip.Logging.nuspec">
       <SubType>Designer</SubType>

@@ -45,7 +45,7 @@ namespace uShip.Logging.LogBuilders
     {
         public LoggableException(Exception ex)
         {
-            Data = ex.Data;
+            Data = ex.Data.NewSanitizedDictionary();
             Message = ex.Message;
             Source = ex.Source;
             StackTrace = ex.StackTrace;
@@ -65,8 +65,6 @@ namespace uShip.Logging.LogBuilders
         public string ExceptionTypeName { get; set; }
         public MethodBase TargetSite { get; set; }
     }
-
-
 
     internal class LoggingEventPropertiesBuilder : ILoggingEventPropertiesBuilder, ILoggingEventContextBuilder
     {
