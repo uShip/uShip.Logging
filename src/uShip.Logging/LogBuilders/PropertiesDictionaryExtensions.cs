@@ -30,7 +30,7 @@ namespace uShip.Logging.LogBuilders
                 }
                 if (data[key] is string)
                 {
-                    sanitizedData[key] = Sanitize(data[key].ToString());
+                    sanitizedData[key] = Sanitize(data[key] as String);
                 }
                 else // expect the object to have been sanitized already
                 {

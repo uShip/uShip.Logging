@@ -54,7 +54,7 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
-        public void Should_sanitiz_credit_cards_from_loggable_exception()
+        public void Should_sanitize_passwords_from_loggable_exception()
         {
             string expectedValue =
                 "{\"user\":{\"************\":\"****\"},\"userPreferences\":{\"currency\":\"USD\",\"siteId\":\"UnitedStates\",\"language\":\"en-US\",\"timeZone\":\"UTC\"},\"profile\":{}}";
