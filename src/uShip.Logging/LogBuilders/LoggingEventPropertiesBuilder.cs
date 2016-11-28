@@ -212,6 +212,8 @@ namespace uShip.Logging.LogBuilders
                     {
                         var duplicatePropsException = new ArgumentException("An element with the same key already exists.");
                         duplicatePropsException.Data.Add("Key", datum.Key);
+                        duplicatePropsException.Data.Add("Value1", _props[datum.Key]);
+                        duplicatePropsException.Data.Add("Value2", datum.Value);
                         throw duplicatePropsException;
                     }
 
