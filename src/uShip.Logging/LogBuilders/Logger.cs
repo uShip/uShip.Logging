@@ -52,7 +52,7 @@ namespace uShip.Logging
             _logstashLog = logFactory.Create(ConfiguredLogger.Logstash);
             _graphiteLog = logFactory.Create(ConfiguredLogger.Graphite);
             _minimalLog = logFactory.Create(ConfiguredLogger.Minimal);
-            _graphiteCountFormat = _graphiteMetricPath + "{0}:1|c";
+            _graphiteCountFormat = _graphiteMetricPath + "{0}:{1}|c";
             _graphiteTimedFormat = "{0}:{1}|ms";
         }
 
@@ -74,6 +74,12 @@ namespace uShip.Logging
         public void Write(IGraphiteKey key, string subKey = null)
         {
             var message = FormatGraphiteMessage(key.Key, subKey, null);
+            _graphiteLog.Info(message);
+        }
+
+        public void Write(int count, IGraphiteKey key, string subKey = null)
+        {
+            var message = FormatGraphiteMessage(key.Key, subKey, null, count);
             _graphiteLog.Info(message);
         }
 
@@ -103,7 +109,7 @@ namespace uShip.Logging
                 .Write();
         }
 
-        private string FormatGraphiteMessage(string key, string subKey, long? milliseconds)
+        private string FormatGraphiteMessage(string key, string subKey, long? milliseconds, int count = 1)
         {
             if (!string.IsNullOrEmpty(subKey))
             {
@@ -111,7 +117,7 @@ namespace uShip.Logging
             }
 
             var message = milliseconds == null 
-                ? string.Format(_graphiteCountFormat, key) 
+                ? string.Format(_graphiteCountFormat, key, count) 
                 : string.Format(_graphiteTimedFormat, key, milliseconds);
 
             return message;
