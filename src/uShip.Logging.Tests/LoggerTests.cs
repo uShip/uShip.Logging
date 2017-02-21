@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
 using log4net;
 using NSubstitute;
 using NUnit.Framework;
@@ -45,7 +47,26 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test);
 
-            log.Received().Info("graphite.test.Test:1|c");
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test~source={0}:1|c", hostName);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
+        public void should_format_message_properly_for_graphite_counter_with_tags()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            logger.Write(GraphiteKey.Test, tags: GetTags());
+
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test~source={0}~key1=value1~key2=value2:1|c", hostName);
+
+            log.Received().Info(expectedValue);
         }
 
         [Test]
@@ -58,7 +79,26 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test, "SubKey");
 
-            log.Received().Info("graphite.test.Test.SubKey:1|c");
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test.SubKey~source={0}:1|c", hostName);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
+        public void should_format_message_properly_for_graphite_counter_with_subkey_with_tags()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            logger.Write(GraphiteKey.Test, "SubKey", GetTags());
+
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test.SubKey~source={0}~key1=value1~key2=value2:1|c", hostName);
+
+            log.Received().Info(expectedValue);
         }
 
         [Test]
@@ -71,7 +111,26 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test, null, milliseconds: 100);
 
-            log.Received().Info("Test:100|ms");
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("Test~source={0}:100|ms", hostName);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
+        public void should_format_message_properly_for_graphite_timer_with_tags()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            logger.Write(GraphiteKey.Test, null, milliseconds: 100, tags: GetTags());
+
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("Test~source={0}~key1=value1~key2=value2:100|ms", hostName);
+
+            log.Received().Info(expectedValue);
         }
 
         [Test]
@@ -84,7 +143,34 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test, "SubKey", milliseconds: 100);
 
-            log.Received().Info("Test.SubKey:100|ms");
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("Test.SubKey~source={0}:100|ms", hostName);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
+        public void should_format_message_properly_for_graphite_timer_with_subkey_with_tags()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            logger.Write(GraphiteKey.Test, "SubKey", milliseconds: 100, tags: GetTags());
+
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("Test.SubKey~source={0}~key1=value1~key2=value2:100|ms", hostName);
+
+            log.Received().Info(expectedValue);
+        }
+
+        private Dictionary<string, string> GetTags()
+        {
+            var tags = new Dictionary<string, string>();
+            tags.Add("key1", "value1");
+            tags.Add("key2", "value2");
+            return tags;
         }
     }
 }

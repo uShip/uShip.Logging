@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using System.Collections.Generic;
+using log4net;
 using log4net.Config;
 using System;
 using System.Text;
@@ -52,8 +53,8 @@ namespace uShip.Logging
             _logstashLog = logFactory.Create(ConfiguredLogger.Logstash);
             _graphiteLog = logFactory.Create(ConfiguredLogger.Graphite);
             _minimalLog = logFactory.Create(ConfiguredLogger.Minimal);
-            _graphiteCountFormat = _graphiteMetricPath + "{0}:{1}|c";
-            _graphiteTimedFormat = "{0}:{1}|ms";
+            _graphiteCountFormat = _graphiteMetricPath + "{0}{1}:{2}|c";
+            _graphiteTimedFormat = "{0}{1}:{2}|ms";
         }
 
         private IFluentLoggerWriter CreateMessageBuilder()
@@ -71,27 +72,27 @@ namespace uShip.Logging
             return CreateMessageBuilder().Exception(exception);
         }
 
-        public void Write(IGraphiteKey key, string subKey = null)
+        public void Write(IGraphiteKey key, string subKey = null, Dictionary<string, string> tags = null)
         {
-            var message = FormatGraphiteMessage(key.Key, subKey, null);
+            var message = FormatGraphiteMessage(key.Key, subKey, null, tags: tags);
             _graphiteLog.Info(message);
         }
 
-        public void Write(int count, IGraphiteKey key, string subKey = null)
+        public void Write(int count, IGraphiteKey key, string subKey = null, Dictionary<string, string> tags = null)
         {
-            var message = FormatGraphiteMessage(key.Key, subKey, null, count);
+            var message = FormatGraphiteMessage(key.Key, subKey, null, count, tags: tags);
             _graphiteLog.Info(message);
         }
 
-        public void Write(IGraphiteKey key, long milliseconds)
+        public void Write(IGraphiteKey key, long milliseconds, Dictionary<string, string> tags = null)
         {
-            var message = FormatGraphiteMessage(key.Key, null, milliseconds);
+            var message = FormatGraphiteMessage(key.Key, null, milliseconds, tags: tags);
             _graphiteLog.Info(message);
         }
 
-        public void Write(IGraphiteKey key, string subKey, long milliseconds)
+        public void Write(IGraphiteKey key, string subKey, long milliseconds, Dictionary<string, string> tags = null)
         {
-            var message = FormatGraphiteMessage(key.Key, subKey, milliseconds);
+            var message = FormatGraphiteMessage(key.Key, subKey, milliseconds, tags: tags);
             _graphiteLog.Info(message);
         }
 
@@ -109,7 +110,11 @@ namespace uShip.Logging
                 .Write();
         }
 
-        private string FormatGraphiteMessage(string key, string subKey, long? milliseconds, int count = 1)
+        private string FormatGraphiteMessage(string key, 
+                                            string subKey, 
+                                            long? milliseconds, 
+                                            int count = 1, 
+                                            Dictionary<string, string> tags = null)
         {
             if (!string.IsNullOrEmpty(subKey))
             {
@@ -117,10 +122,29 @@ namespace uShip.Logging
             }
 
             var message = milliseconds == null 
-                ? string.Format(_graphiteCountFormat, key, count) 
-                : string.Format(_graphiteTimedFormat, key, milliseconds);
+                ? string.Format(_graphiteCountFormat, key, GetDataTags(tags),count) 
+                : string.Format(_graphiteTimedFormat, key, GetDataTags(tags), milliseconds);
 
             return message;
+        }
+
+        private string GetDataTags(Dictionary<string, string> tags)
+        {
+            const string tagFormat = "~{0}={1}";
+            
+            var tagsToWrite = new StringBuilder();
+
+            var source = Environment.MachineName;
+            tagsToWrite.Append(string.Format(tagFormat, "source", source));
+
+            if (tags == null) return tagsToWrite.ToString();
+
+            foreach (var tag in tags)
+            {
+                tagsToWrite.Append(string.Format(tagFormat, tag.Key, tag.Value));
+            }
+
+            return tagsToWrite.ToString();
         }
     }
 }
