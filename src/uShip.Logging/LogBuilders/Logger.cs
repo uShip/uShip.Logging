@@ -96,6 +96,28 @@ namespace uShip.Logging
             _graphiteLog.Info(message);
         }
 
+        public void Count(string key, int count, Dictionary<string, string> tags = null)
+        {
+            Count(key, null, count, tags);
+        }
+
+        public void Count(string key, string subkey, int count, Dictionary<string, string> tags = null)
+        {
+            var message = FormatGraphiteMessage(key, null, null, count, tags);
+            _graphiteLog.Info(message);
+        }
+
+        public void Timer(string key, TimeSpan span, Dictionary<string, string> tags = null)
+        {
+            Timer(key, null, span, tags);
+        }
+
+        public void Timer(string key, string subkey, TimeSpan span, Dictionary<string, string> tags = null)
+        {
+            var message = FormatGraphiteMessage(key, subkey, Convert.ToInt64(span.TotalMilliseconds), tags: tags);
+            _graphiteLog.Info(message);
+        }
+
         private IMinimalLogDataBuilder CreateMinimalMessageBuilder()
         {
             return new MinimalLogDataBuilder(_minimalLog, _loggingEventDataBuilder);
