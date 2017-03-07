@@ -74,6 +74,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FluentLoggerDataBuilderTestscs.cs" />
     <Compile Include="HttpRequestExtensionsTests.cs" />
     <Compile Include="HttpRequestLoggingTests.cs" />
     <Compile Include="LoggerTests.cs" />
