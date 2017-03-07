@@ -178,11 +178,7 @@ namespace uShip.Logging
                     else if (type == typeof(DateTimeOffset))
                     {
                         _data.Add(name, (DateTimeOffset)value);
-                    }                   
-                    else if (type == typeof(DateTimeOffset))
-                    {
-                        _data.Add(name, (DateTimeOffset)value);
-                    }
+                    }         
                 }                              
             }
 
