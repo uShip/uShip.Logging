@@ -156,9 +156,6 @@ namespace uShip.Logging
             
             var tagsToWrite = new StringBuilder();
 
-            var source = Environment.MachineName;
-            tagsToWrite.Append(string.Format(tagFormat, "source", source));
-
             if (tags == null) return tagsToWrite.ToString();
 
             foreach (var tag in tags)
