@@ -143,18 +143,24 @@ namespace uShip.Logging
                 key = key + "." + subKey;
             }
 
-            var message = milliseconds == null 
-                ? string.Format(_graphiteCountFormat, key, GetDataTags(tags),count) 
-                : string.Format(_graphiteTimedFormat, key, GetDataTags(tags), milliseconds);
+            var message = milliseconds == null
+                ? string.Format(_graphiteCountFormat, key, GetDataTags(tags, addHostSource:false), count)
+                : string.Format(_graphiteTimedFormat, key, GetDataTags(tags, addHostSource:true), milliseconds);
 
             return message;
         }
 
-        private string GetDataTags(Dictionary<string, string> tags)
+        private string GetDataTags(Dictionary<string, string> tags, bool addHostSource)
         {
             const string tagFormat = "~{0}={1}";
             
             var tagsToWrite = new StringBuilder();
+
+            if (addHostSource)
+            {
+                var source = Environment.MachineName;
+                tagsToWrite.Append(string.Format(tagFormat, "source", source));
+            }
 
             if (tags == null) return tagsToWrite.ToString();
 
