@@ -163,7 +163,7 @@ namespace uShip.Logging
                 tagsToWrite.Append(string.Format(tagFormat, tag.Key, tag.Value));
             }
 
-            return tagsToWrite.ToString(); 
+            return tagsToWrite.ToString();
         }
     }
 }
