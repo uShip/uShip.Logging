@@ -39,29 +39,55 @@ namespace uShip.Logging
             return false;
         }
 
-        [System.Configuration.ConfigurationPropertyAttribute("counterSourceOverride", IsRequired = false)]
-        public string CounterSourceOverride
+        [System.Configuration.ConfigurationPropertyAttribute("counterEnvironment", IsRequired = false)]
+        public string CounterEnvironment
         {
             get
             {
-                return ((string)(this["counterSourceOverride"]));
+                return ((string)(this["counterEnvironment"]));
             }
             set
             {
-                this["counterSourceOverride"] = value;
+                this["counterEnvironment"] = value;
             }
         }
 
-        [System.Configuration.ConfigurationPropertyAttribute("timerSourceOverride", IsRequired = false)]
-        public string TimerSourceOverride
+        [System.Configuration.ConfigurationPropertyAttribute("timerEnvironment", IsRequired = false)]
+        public string TimerEnvironment
         {
             get
             {
-                return ((string)(this["timerSourceOverride"]));
+                return ((string)(this["timerEnvironment"]));
             }
             set
             {
-                this["timerSourceOverride"] = value;
+                this["timerEnvironment"] = value;
+            }
+        }
+
+        [System.Configuration.ConfigurationPropertyAttribute("enableCounterSource", IsRequired = false, DefaultValue = true)]
+        public bool EnableCounterSource
+        {
+            get
+            {
+                return ((bool)(this["enableCounterSource"]));
+            }
+            set
+            {
+                this["enableCounterSource"] = value;
+            }
+        }
+
+        [System.Configuration.ConfigurationPropertyAttribute("enableTimerSource", IsRequired = false, DefaultValue = true)]
+        public bool EnableTimerSource
+        {
+            get
+            {
+                return ((bool)(this["enableTimerSource"]));
+            }
+            set
+            {
+                this["enableTimerSource"] = value;
             }
         }
 

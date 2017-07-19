@@ -38,19 +38,18 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
-        public void should_format_message_properly_for_counter_source_override()
+        public void should_format_message_properly_for_counter_source_disabled()
         {
             var logFactory = Substitute.For<LogFactory>();
             var log = Substitute.For<ILog>();
             logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
 
-            var source = "testoverride";
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
-            uShipLogging.Config.CounterSourceOverride = source;
+            uShipLogging.Config.EnableCounterSource = false;
             logger.Write(GraphiteKey.Test);
-            uShipLogging.Config.CounterSourceOverride = null;
+            uShipLogging.Config.EnableCounterSource = true;
 
-            var expectedValue = String.Format("graphite.test.Test~source={0}:1|c", source);
+            var expectedValue = "graphite.test.Test:1|c";
 
             log.Received().Info(expectedValue);
         }
@@ -62,13 +61,12 @@ namespace uShip.Logging.Tests
             var log = Substitute.For<ILog>();
             logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
 
-            var source = "testoverride";
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
-            uShipLogging.Config.TimerSourceOverride = source;
+            uShipLogging.Config.EnableTimerSource = false;
             logger.Write(GraphiteKey.Test, null, milliseconds: 100);
-            uShipLogging.Config.TimerSourceOverride = null;
+            uShipLogging.Config.EnableTimerSource = true;
 
-            var expectedValue = String.Format("Test~source={0}:100|ms", source);
+            var expectedValue = "Test:100|ms";
 
             log.Received().Info(expectedValue);
         }
@@ -85,6 +83,24 @@ namespace uShip.Logging.Tests
 
             var hostName = Environment.MachineName;
             var expectedValue = String.Format("graphite.test.Test~source={0}:1|c", hostName);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
+        public void should_format_message_properly_for_graphite_counter_with_environment()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            uShipLogging.Config.CounterEnvironment = "testenv";
+            logger.Write(GraphiteKey.Test);
+            uShipLogging.Config.CounterEnvironment = null;
+
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test~source={0}~env={1}:1|c", hostName, "testenv");
 
             log.Received().Info(expectedValue);
         }
@@ -153,6 +169,24 @@ namespace uShip.Logging.Tests
             log.Received().Info(expectedValue);
         }
 
+        [Test]
+        public void should_format_message_properly_for_graphite_timer_with_environment()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            uShipLogging.Config.TimerEnvironment = "testenv";
+            logger.Write(GraphiteKey.Test, null, milliseconds: 100);
+            uShipLogging.Config.TimerEnvironment = null;
+
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("Test~source={0}~env={1}:100|ms", hostName, "testenv");
+
+            log.Received().Info(expectedValue);
+        }
+        
         [Test]
         public void should_format_message_properly_for_graphite_timer_with_tags()
         {
