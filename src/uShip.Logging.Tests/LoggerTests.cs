@@ -47,7 +47,8 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test);
 
-            var expectedValue = "graphite.test.Test:1|c";
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test~source={0}:1|c", hostName);
 
             log.Received().Info(expectedValue);
         }
@@ -62,7 +63,8 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test, tags: GetTags());
 
-            var expectedValue = "graphite.test.Test~key1=value1~key2=value2:1|c";
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test~source={0}~key1=value1~key2=value2:1|c", hostName);
 
             log.Received().Info(expectedValue);
         }
@@ -77,7 +79,8 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test, "SubKey");
 
-            var expectedValue = "graphite.test.Test.SubKey:1|c";
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test.SubKey~source={0}:1|c", hostName);
 
             log.Received().Info(expectedValue);
         }
@@ -92,7 +95,8 @@ namespace uShip.Logging.Tests
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
             logger.Write(GraphiteKey.Test, "SubKey", GetTags());
 
-            var expectedValue = "graphite.test.Test.SubKey~key1=value1~key2=value2:1|c";
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test.SubKey~source={0}~key1=value1~key2=value2:1|c", hostName);
 
             log.Received().Info(expectedValue);
         }
