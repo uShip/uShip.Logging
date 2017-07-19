@@ -144,23 +144,18 @@ namespace uShip.Logging
             }
 
             var message = milliseconds == null
-                ? string.Format(_graphiteCountFormat, key, GetDataTags(tags, addHostSource:false), count)
-                : string.Format(_graphiteTimedFormat, key, GetDataTags(tags, addHostSource:true), milliseconds);
+                ? string.Format(_graphiteCountFormat, key, GetDataTags(tags, uShipLogging.Config.CounterSourceOverride), count)
+                : string.Format(_graphiteTimedFormat, key, GetDataTags(tags, uShipLogging.Config.TimerSourceOverride), milliseconds);
 
             return message;
         }
 
-        private string GetDataTags(Dictionary<string, string> tags, bool addHostSource)
+        private string GetDataTags(Dictionary<string, string> tags, string sourceOverride)
         {
             const string tagFormat = "~{0}={1}";
             
             var tagsToWrite = new StringBuilder();
-
-            if (addHostSource)
-            {
-                var source = Environment.MachineName;
-                tagsToWrite.Append(string.Format(tagFormat, "source", source));
-            }
+            tagsToWrite.Append(string.Format(tagFormat, "source", string.IsNullOrEmpty(sourceOverride) ? Environment.MachineName : sourceOverride));
 
             if (tags == null) return tagsToWrite.ToString();
 

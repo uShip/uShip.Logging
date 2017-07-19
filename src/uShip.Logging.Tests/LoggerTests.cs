@@ -38,6 +38,42 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
+        public void should_format_message_properly_for_counter_source_override()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var source = "testoverride";
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            uShipLogging.Config.CounterSourceOverride = source;
+            logger.Write(GraphiteKey.Test);
+            uShipLogging.Config.CounterSourceOverride = null;
+
+            var expectedValue = String.Format("graphite.test.Test~source={0}:1|c", source);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
+        public void should_format_message_properly_for_timer_source_override()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var source = "testoverride";
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            uShipLogging.Config.TimerSourceOverride = source;
+            logger.Write(GraphiteKey.Test, null, milliseconds: 100);
+            uShipLogging.Config.TimerSourceOverride = null;
+
+            var expectedValue = String.Format("Test~source={0}:100|ms", source);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
         public void should_format_message_properly_for_graphite_counter()
         {
             var logFactory = Substitute.For<LogFactory>();

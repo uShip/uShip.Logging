@@ -28,15 +28,42 @@ namespace uShip.Logging
 
         public static uShipLoggingConfigurationSection Config
         {
-            get
-            {
-                return _config;
-            }
+            get { return _config; }
         }
     }
 
     public sealed partial class uShipLoggingConfigurationSection : System.Configuration.ConfigurationSection
     {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        [System.Configuration.ConfigurationPropertyAttribute("counterSourceOverride", IsRequired = false)]
+        public string CounterSourceOverride
+        {
+            get
+            {
+                return ((string)(this["counterSourceOverride"]));
+            }
+            set
+            {
+                this["counterSourceOverride"] = value;
+            }
+        }
+
+        [System.Configuration.ConfigurationPropertyAttribute("timerSourceOverride", IsRequired = false)]
+        public string TimerSourceOverride
+        {
+            get
+            {
+                return ((string)(this["timerSourceOverride"]));
+            }
+            set
+            {
+                this["timerSourceOverride"] = value;
+            }
+        }
 
         [System.Configuration.ConfigurationPropertyAttribute("graphiteMetricPath", IsRequired = true)]
         public string GraphiteMetricPath
