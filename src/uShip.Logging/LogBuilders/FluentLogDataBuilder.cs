@@ -4,6 +4,8 @@ using log4net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using uShip.Logging.LogBuilders;
@@ -12,7 +14,7 @@ namespace uShip.Logging
 {
     public partial class Logger : ILogger
     {
-        private class FluentLogDataBuilder : IFluentLoggerWriter
+        internal class FluentLogDataBuilder : IFluentLoggerWriter
         {
             private readonly ILog _log;
             private readonly LoggingEventDataBuilder _loggingEventDataBuilder;
@@ -21,7 +23,7 @@ namespace uShip.Logging
             private Exception _exception;
             private string _sql;
             private IEnumerable<KeyValuePair<string, object>> _sqlParameters;
-            private readonly IDictionary<string, object> _data = new Dictionary<string, object>();
+            internal readonly IDictionary<string, object> _data = new Dictionary<string, object>();
             private readonly IList<string> _tags = new List<string>();
             private HttpRequestBase _request;
             private HttpResponseBase _response;
@@ -80,6 +82,104 @@ namespace uShip.Logging
             {
                 _exception = exception;
                 return this;
+            }
+
+            /// <summary>
+            /// Reflectively add non-complex properties (exceptions like DateTime and DateTimeOffset) from an object to the Data dictionary to be included in the logger's message.
+            /// </summary>
+            /// <param name="prefix">Prefix that will be prepended to the property key names in the data dictionary.</param>
+            /// <param name="value">Object/class that we are logging properties from.</param>
+            /// <returns></returns>
+            public IFluentLoggerWriter Data(string prefix, object value)
+            {
+                MapDataFromObject(prefix, value, true);
+                return this;
+            }
+
+            /// <summary>
+            /// Short-hand version of <see cref="Data(string,object)"/ of logging data from an object.
+            /// </summary>
+            /// <param name="value">Object's whose type will be used as the prefix to logging key name for all its properties.</param>
+            /// <returns></returns>
+            public IFluentLoggerWriter Data(object value)
+            {
+                var name = value.GetType().Name + '_';
+                return Data(name, value);
+            }
+
+            /// <summary>
+            /// Recursive method that adds properties of an object to the Data dictionary to be included in the logger's message.
+            /// </summary>
+            /// <param name="name"></param>
+            /// <param name="value"></param>
+            /// <param name="topLevel"></param>
+            private void MapDataFromObject(string name, object value, bool topLevel = false)
+            {
+                var type = value.GetType();        
+                if (topLevel)
+                {                    
+                    var props = type.GetProperties();
+                    //hard limit to 30 for now
+                    //TODO: Extend this to be dynamic.
+                    foreach (var prop in props.Take(30))
+                    {
+                        var propertyPrefixedName = name + prop.Name;
+                        //this seems really odd, but it is how you peel the properties's values off of the topLevel object. 
+                        var val = prop.GetValue(value, null);
+                        MapDataFromObject(propertyPrefixedName, val);
+                    }
+                    //we infer that this is definitely not a primitive and exit early. 
+                    return;
+                }
+                                
+                if (type.IsPrimitive
+                    || type == typeof(Decimal)
+                    || type == typeof(String)
+                    || type == typeof(DateTime)
+                    || type == typeof(DateTimeOffset)
+                    || type == typeof(TimeSpan)
+                    )
+                {
+                    
+                    //primitives
+                    if (type == typeof(String))
+                    {
+                        _data.Add(name, (String) value);
+                    }
+                    else if (type == typeof(int))
+                    {
+                        _data.Add(name, (int) value);
+                    }
+                    else if (type == typeof(long))
+                    {                       
+                        _data.Add(name, (long) value);
+                    }
+                    else if (type == typeof(float))
+                    {
+                        _data.Add(name, (float)value);
+                    }
+                    else if (type == typeof(double))
+                    {
+                        _data.Add(name, (double)value);
+                    }
+                    else if (type == typeof(Boolean))
+                    {
+                        _data.Add(name, (Boolean)value);
+                    }
+                    else if (type == typeof(Decimal))
+                    {
+                        _data.Add(name, (decimal)value);
+                    }
+                    //dates
+                    else if (type == typeof(DateTime))
+                    {
+                        _data.Add(name, (DateTime) value);
+                    }
+                    else if (type == typeof(DateTimeOffset))
+                    {
+                        _data.Add(name, (DateTimeOffset)value);
+                    }         
+                }                              
             }
 
             public IFluentLoggerWriter Data(string name, string value)

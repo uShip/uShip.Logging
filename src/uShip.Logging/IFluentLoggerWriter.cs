@@ -54,6 +54,16 @@ namespace uShip.Logging
         /// <returns></returns>
         [Pure]
         [JetBrains.Annotations.Pure]
+        IFluentLoggerWriter Data(string name, object value);
+
+        /// <summary>
+        /// Fluent interface for adding data to a log.
+        /// </summary>
+        /// <param name="name">The key to be logged.</param>
+        /// <param name="value">The value to be logged.</param>
+        /// <returns></returns>
+        [Pure]
+        [JetBrains.Annotations.Pure]
         IFluentLoggerWriter Data(string name, string value);
 
         /// <summary>
