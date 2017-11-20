@@ -21,7 +21,7 @@ namespace uShip.Logging.LogBuilders
         ILoggingEventPropertiesBuilder WithUniqueOrigin(string message, Exception exception);
         ILoggingEventPropertiesBuilder WithCurrentVersion();
 
-        ILoggingEventContextBuilder WithCurrentContext();
+        ILoggingEventContextBuilder ToContextBuilder();
         
         ILoggingEventPropertiesBuilder WithAdditionalData(IDictionary<string, object> data);
         ILoggingEventPropertiesBuilder WithTags(IEnumerable<string> tags);
@@ -238,30 +238,11 @@ namespace uShip.Logging.LogBuilders
         }
 
         #region Context properties
-        private HttpContextBase _context;
         private HttpRequestBase _request;
         private HttpResponseBase _response;
 
-        public ILoggingEventContextBuilder WithCurrentContext()
+        public ILoggingEventContextBuilder ToContextBuilder()
         {
-            var currentContext = HttpContext.Current;
-            if (currentContext == null)
-            {
-                return this;
-            }
-
-            _context = new HttpContextWrapper(currentContext);
-
-            try
-            {
-                _request = _context.Request;
-                _response = _context.Response;
-            }
-            catch (Exception)
-            {
-                _props.Set("HttpRequest", "Unable to read request instance");
-            }
-
             return this;
         }
 
@@ -270,6 +251,18 @@ namespace uShip.Logging.LogBuilders
             if (request != null)
             {
                 _request = request;
+                return this;
+            }
+
+            if (HttpContext.Current == null) return this;
+
+            try
+            {
+                _request = new HttpContextWrapper(HttpContext.Current).Request;
+            }
+            catch (Exception)
+            {
+                _props.Set("HttpRequest", "Unable to read request instance");
             }
             return this;
         }
@@ -279,6 +272,17 @@ namespace uShip.Logging.LogBuilders
             if (response != null)
             {
                 _response = response;
+                return this;
+            }
+
+            if (HttpContext.Current == null) return this;
+
+            try
+            {
+                _response = new HttpContextWrapper(HttpContext.Current).Response;
+            }
+            catch (Exception)
+            {
             }
             return this;
         }
@@ -289,7 +293,7 @@ namespace uShip.Logging.LogBuilders
             {
                 _props.Set("Url", _request.Url.OriginalString.CleanQueryString());
                 _props.Set("UserAgent", _request.UserAgent);
-                _props.SafeSetProp("IPAddress", () => GetCallingIpAddress(_context));
+                _props.SafeSetProp("IPAddress", () => GetCallingIpAddressFromRequest());
                 _props.Set("RequestMethod", _request.HttpMethod);
 
                 _props.SafeSetProp("RequestHeaders", () => _request.Headers.ToQuery());
@@ -331,29 +335,29 @@ namespace uShip.Logging.LogBuilders
             return input.Substring(0, maxLength.Value) + "  #truncated#";
         }
 
-        private string GetCallingIpAddress(HttpContextBase context)
+        private string GetCallingIpAddressFromRequest()
         {
-            if (context == null || context.Request == null)
+            if (_request == null || _request.Headers == null)
             {
                 return String.Empty;
             }
-            if (!String.IsNullOrEmpty(context.Request["HTTP_TRUE_CLIENT_IP"]))
+            if (!String.IsNullOrEmpty(_request.Headers["TRUE-CLIENT-IP"]))
             {
-                return context.Request["HTTP_TRUE_CLIENT_IP"];
+                return _request.Headers["TRUE-CLIENT-IP"];
             }
-            if (!String.IsNullOrEmpty(context.Request["HTTP_X_FORWARDED_FOR"]))
+            if (!String.IsNullOrEmpty(_request.Headers["X-FORWARDED-FOR"]))
             {
-                return context.Request["HTTP_X_FORWARDED_FOR"].Split(',')[0];
+                return _request.Headers["X-FORWARDED-FOR"].Split(',')[0];
             }
-            if (!String.IsNullOrEmpty(context.Request["HTTP_X_CLIENTSIDE"]))
+            if (!String.IsNullOrEmpty(_request.Headers["X-CLIENTSIDE"]))
             {
-                return context.Request["HTTP_X_CLIENTSIDE"];
+                return _request.Headers["X-CLIENTSIDE"];
             }
-            if (!String.IsNullOrEmpty(context.Request["HTTP_X_CLUSTER_CLIENT_IP"]))
+            if (!String.IsNullOrEmpty(_request.Headers["X-CLUSTER-CLIENT-IP"]))
             {
-                return context.Request["HTTP_X_CLUSTER_CLIENT_IP"];
+                return _request.Headers["X-CLUSTER-CLIENT-IP"];
             }
-            return context.Request["REMOTE_ADDR"];
+            return _request.Headers["REMOTE-ADDR"];
         }
 
         public ILoggingEventContextBuilder IncludeResponse(int? responseTruncateLength)
