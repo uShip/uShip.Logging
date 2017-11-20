@@ -21,7 +21,7 @@ namespace uShip.Logging.LogBuilders
         ILoggingEventPropertiesBuilder WithUniqueOrigin(string message, Exception exception);
         ILoggingEventPropertiesBuilder WithCurrentVersion();
 
-        ILoggingEventContextBuilder WithCurrentContext();
+        ILoggingEventContextBuilder ToContextBuilder();
         
         ILoggingEventPropertiesBuilder WithAdditionalData(IDictionary<string, object> data);
         ILoggingEventPropertiesBuilder WithTags(IEnumerable<string> tags);
@@ -241,22 +241,8 @@ namespace uShip.Logging.LogBuilders
         private HttpRequestBase _request;
         private HttpResponseBase _response;
 
-        public ILoggingEventContextBuilder WithCurrentContext()
+        public ILoggingEventContextBuilder ToContextBuilder()
         {
-            var currentContext = HttpContext.Current;
-            if (currentContext == null)
-            {
-                return this;
-            }
-
-            try
-            {
-                _response = new HttpContextWrapper(currentContext).Response;
-            }
-            catch (Exception)
-            {
-            }
-
             return this;
         }
 
@@ -286,6 +272,17 @@ namespace uShip.Logging.LogBuilders
             if (response != null)
             {
                 _response = response;
+                return this;
+            }
+
+            if (HttpContext.Current == null) return this;
+
+            try
+            {
+                _response = new HttpContextWrapper(HttpContext.Current).Response;
+            }
+            catch (Exception)
+            {
             }
             return this;
         }

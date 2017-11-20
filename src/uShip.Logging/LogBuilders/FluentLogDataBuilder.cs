@@ -170,7 +170,7 @@ namespace uShip.Logging
                             .WithException(_exception)
                             .WithCurrentVersion()
                             .WithUniqueOrigin(_message, _exception)
-                            .WithCurrentContext()
+                            .ToContextBuilder()
                             .WithRequest(_request)
                             .WithResponse(_response)
                             .IncludeBasicRequestInfo();
