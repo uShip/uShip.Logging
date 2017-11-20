@@ -12,7 +12,7 @@ var logger = Logger.GetInstance();
 
 // log plain message with severity WARN
 logger
-.Message("This is a warning.").
+.Message("This is a warning.")
 .Warn()
 .Write();
 
