@@ -57,7 +57,7 @@ namespace uShip.Logging
             _graphiteTimedFormat = "{0}{1}:{2}|ms";
         }
 
-        private IFluentLoggerWriter CreateMessageBuilder()
+        protected virtual IFluentLoggerWriter CreateMessageBuilder()
         {
             return new FluentLogDataBuilder(_logstashLog, _loggingEventDataBuilder);
         }
