@@ -5,6 +5,8 @@ using System.Threading;
 using System.Web;
 using log4net.Core;
 using log4net.Util;
+using uShip.Logging.Extensions;
+using uShip.Logging.LogBuilders;
 
 namespace uShip.Logging
 {
@@ -34,7 +36,7 @@ namespace uShip.Logging
                     loggerStackFrame.GetFileName(),
                     loggerStackFrame.GetFileLineNumber().ToString()),
                 LoggerName = reflectedName,
-                Message = message ?? exception.Message,
+                Message = (message ?? exception.Message).IfNotNull(m => m.SanitizeSensitiveInfo()),
                 TimeStamp = DateTime.Now,
                 UserName = userName,
                 Properties = properties

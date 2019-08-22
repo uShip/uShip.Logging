@@ -35,9 +35,16 @@ namespace uShip.Logging.Tests
 
             loggingProperties.Set("someInfo", "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"Password\\\":\\\"meadows2014\\\"");
             loggingProperties.Set("moreInfo", "\"emailAddress\":\"hello@meadowshotel.com\",\"password\":\"meadows2014\"");
+            loggingProperties.Set("evenMoreInfo", "A potentially dangerous Request.Form value was detected from the client (_ctl0:ContentBody:conSignIn:txtExistingPassword=\"Ss9W7+&#+%@\"");
+            loggingProperties.Set("evenEvenMoreInfo", "&_ctl0%3aContentBody%3aconSignIn%3atxtExistingUserName=user1%40uship.com&_ctl0%3aContentBody%3aconSignIn%3atxtExistingPassword=shipit&_ctl0%3aContentBody%3aconSignIn%3achkSetCookie=");
+            
 
-            Assert.AreEqual(loggingProperties["someInfo"], "\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"************\\\":\\\"****\\\"");
-            Assert.AreEqual(loggingProperties["moreInfo"], "\"emailAddress\":\"hello@meadowshotel.com\",\"************\":\"****\"");
+            Assert.AreEqual("\"EmailAddress\\\":\\\"hello@meadowshotel.com\\\",\\\"************\\\":\\\"****\\\"", loggingProperties["someInfo"]);
+            Assert.AreEqual("\"emailAddress\":\"hello@meadowshotel.com\",\"************\":\"****\"", loggingProperties["moreInfo"]);
+            Assert.AreEqual("A potentially dangerous Request.Form value was detected from the client (_ctl0:ContentBody:conSignIn:txtExisting************", loggingProperties["evenMoreInfo"]);
+            Assert.AreEqual(
+                "&_ctl0%3aContentBody%3aconSignIn%3atxtExistingUserName=user1%40uship.com&_ctl0%3aContentBody%3aconSignIn%3atxtExisting************",
+                loggingProperties["evenEvenMoreInfo"]);
         }
 
         [Test]
