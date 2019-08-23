@@ -46,7 +46,7 @@ namespace uShip.Logging.LogBuilders
         public LoggableException(Exception ex)
         {
             Data = ex.Data.NewSanitizedDictionary();
-            Message = ex.Message;
+            Message = ex.Message.IfNotNull(m => m.SanitizeSensitiveInfo());
             Source = ex.Source;
             StackTrace = ex.StackTrace;
             TargetSite = ex.TargetSite;

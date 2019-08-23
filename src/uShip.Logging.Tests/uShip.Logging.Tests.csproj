@@ -77,7 +77,9 @@
   <ItemGroup>
     <Compile Include="HttpRequestExtensionsTests.cs" />
     <Compile Include="HttpRequestLoggingTests.cs" />
+    <Compile Include="LoggableExceptionTests.cs" />
     <Compile Include="LoggerTests.cs" />
+    <Compile Include="LoggingEventDataBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestGraphiteKey.cs" />
     <Compile Include="LoggingEventPropertiesBuilderTests.cs" />
