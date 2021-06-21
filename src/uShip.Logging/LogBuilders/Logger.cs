@@ -103,7 +103,7 @@ namespace uShip.Logging
 
         public void Count(string key, string subkey, int count, Dictionary<string, string> tags = null)
         {
-            var message = FormatGraphiteMessage(key, null, null, count, tags);
+            var message = FormatGraphiteMessage(key, subkey, null, count, tags);
             _graphiteLog.Info(message);
         }
 
