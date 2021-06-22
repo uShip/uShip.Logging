@@ -145,10 +145,10 @@ namespace uShip.Logging.Tests
             logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
 
             var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
-            logger.Count(GraphiteKey.Test.ToString(), "SubKey", 1);
+            logger.Count(GraphiteKey.Test.Key, "SubKey", 1);
 
             var hostName = Environment.MachineName;
-            var expectedValue = String.Format("graphite.test.uShip.Logging.Tests.GraphiteKey.SubKey~source={0}:1|c", hostName);
+            var expectedValue = String.Format("graphite.test.Test.SubKey~source={0}:1|c", hostName);
 
             log.Received().Info(expectedValue);
         }
