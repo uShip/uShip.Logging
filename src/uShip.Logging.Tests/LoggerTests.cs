@@ -138,6 +138,22 @@ namespace uShip.Logging.Tests
         }
 
         [Test]
+        public void should_format_message_properly_for_count_method_with_subkey()
+        {
+            var logFactory = Substitute.For<LogFactory>();
+            var log = Substitute.For<ILog>();
+            logFactory.Create(ConfiguredLogger.Graphite).Returns(log);
+
+            var logger = new Logger(logFactory, Substitute.For<LoggingEventDataBuilder>());
+            logger.Count(GraphiteKey.Test.Key, "SubKey", 1);
+
+            var hostName = Environment.MachineName;
+            var expectedValue = String.Format("graphite.test.Test.SubKey~source={0}:1|c", hostName);
+
+            log.Received().Info(expectedValue);
+        }
+
+        [Test]
         public void should_format_message_properly_for_graphite_counter_with_subkey_with_tags()
         {
             var logFactory = Substitute.For<LogFactory>();
